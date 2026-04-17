@@ -1,0 +1,3255 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VTI — Confluenza</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Confluenza VTI">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0B1F3A">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --navy2: #122844;
+    --navy3: #1a3558;
+    --teal: #00B4D8;
+    --teal2: #0096c7;
+    --gold: #F4A261;
+    --white: #ffffff;
+    --grey: #8fa3b8;
+    --grey2: #c5d3de;
+    --green: #06d6a0;
+    --amber: #ffd166;
+    --red: #ef476f;
+    --card: rgba(255,255,255,0.05);
+    --card2: rgba(255,255,255,0.09);
+    --border: rgba(255,255,255,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: rgba(11,31,58,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    padding: 0 24px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--teal), var(--teal2));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+  .logo-text { font-size: 13px; font-weight: 600; color: var(--grey2); letter-spacing: 0.5px; }
+  .logo-sub { font-size: 10px; color: var(--grey); letter-spacing: 1px; text-transform: uppercase; }
+  .header-center {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .clock-display {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--teal);
+    letter-spacing: 2px;
+    display: none;
+  }
+  .round-badge {
+    font-size: 11px;
+    color: var(--grey);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: none;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .team-badge {
+    background: var(--card);
+    border: 1px solid var(--teal);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teal);
+    display: none;
+  }
+  .lang-toggle {
+    display: flex;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .lang-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--grey);
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .lang-btn.active {
+    background: var(--teal);
+    color: var(--navy);
+    border-radius: 20px;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    display: none;
+    min-height: 100vh;
+    padding-top: 58px;
+    overflow-x: hidden;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── WELCOME ── */
+  #screen-welcome {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,180,216,0.08) 0%, transparent 70%);
+    padding: 80px 24px;
+  }
+  .welcome-tagline {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+  }
+  .welcome-title {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+  .welcome-title span { color: var(--teal); }
+  .welcome-sub {
+    font-size: 16px;
+    color: var(--grey);
+    max-width: 480px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  .welcome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 540px;
+    margin: 0 auto 48px;
+  }
+  .welcome-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .welcome-stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .welcome-stat-label { font-size: 11px; color: var(--grey); text-transform: uppercase; letter-spacing: 0.5px; }
+  .btn-primary {
+    background: var(--teal);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:hover { background: var(--teal2); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--teal);
+    border: 1px solid var(--teal);
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(0,180,216,0.1); }
+
+  /* ── REGISTER ── */
+  #screen-register {
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+  }
+  .register-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+  }
+  .register-card h2 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+  .register-card p { color: var(--grey); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
+  .input-group { position: relative; margin-bottom: 8px; }
+  .name-input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 48px 14px 16px;
+    font-size: 16px;
+    color: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .name-input::placeholder { color: var(--grey); font-weight: 400; letter-spacing: 0.5px; }
+  .name-input:focus { border-color: var(--teal); }
+  .name-input.error { border-color: var(--red); }
+  .name-input.ok { border-color: var(--green); }
+  .input-hint { font-size: 12px; color: var(--grey); margin-bottom: 24px; line-height: 1.5; }
+  .input-status { font-size: 12px; height: 18px; margin-bottom: 8px; text-align: center; }
+  .input-status.error { color: var(--red); }
+  .input-status.ok { color: var(--green); }
+  .input-status.checking { color: var(--amber); }
+
+  /* ── BRIEFING ── */
+  #screen-briefing {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 24px 40px;
+    width: 100%;
+  }
+  .briefing-header {
+    background: linear-gradient(135deg, var(--navy2), var(--navy3));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .briefing-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--teal), var(--teal2));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .briefing-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .briefing-header p { color: var(--grey); font-size: 14px; line-height: 1.6; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .info-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); margin-bottom: 10px; }
+  .info-card p { font-size: 13px; line-height: 1.6; color: var(--grey2); }
+  .org-chars { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .char-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  .char-name { font-weight: 700; color: var(--white); margin-bottom: 2px; }
+  .char-role { color: var(--grey); font-size: 11px; }
+  .char-item.you { border: 1px solid var(--teal); }
+  .briefing-cta { text-align: center; padding-top: 16px; }
+
+  /* ── GAME SCREEN ── */
+  #screen-round {
+    flex-direction: column;
+    padding-top: 58px;
+  }
+  .game-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    flex: 1;
+    height: calc(100vh - 58px);
+    overflow: hidden;
+  }
+  .game-main {
+    overflow-y: auto;
+    padding: 24px;
+    border-right: 1px solid var(--border);
+  }
+  .game-sidebar {
+    overflow-y: auto;
+    background: rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
+  .round-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .round-title-block h2 { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+  .round-subtitle { font-size: 12px; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; }
+  .timer-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .timer-label { font-size: 10px; color: var(--grey); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .timer-value {
+    font-size: 24px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    color: var(--green);
+    transition: color 0.5s;
+  }
+  .timer-value.amber { color: var(--amber); }
+  .timer-value.red { color: var(--red); }
+  .timer-bar-wrap {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+  .timer-bar {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 1s linear, background 0.5s;
+    width: 100%;
+  }
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .phase-badge.read { background: rgba(255,209,102,0.15); color: var(--amber); border: 1px solid rgba(255,209,102,0.3); }
+  .phase-badge.answer { background: rgba(6,214,160,0.15); color: var(--green); border: 1px solid rgba(6,214,160,0.3); }
+  .phase-badge.overtime { background: rgba(239,71,111,0.15); color: var(--red); border: 1px solid rgba(239,71,111,0.3); }
+  .scenario-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--grey2);
+    white-space: pre-line;
+  }
+  .scenario-box strong { color: var(--white); }
+  .choices-section h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--grey);
+    margin-bottom: 12px;
+  }
+  .choices-locked-msg {
+    text-align: center;
+    padding: 20px;
+    color: var(--amber);
+    font-size: 13px;
+    background: rgba(255,209,102,0.07);
+    border: 1px solid rgba(255,209,102,0.2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .choice-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    -webkit-tap-highlight-color: transparent;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+  }
+  .choice-item:hover:not(.disabled) { border-color: var(--teal); background: var(--card2); }
+  .choice-item.selected { border-color: var(--teal); background: rgba(0,180,216,0.1); }
+  .choice-item.ranked { border-color: var(--gold); background: rgba(244,162,97,0.1); }
+  .choice-item.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+  .choice-id {
+    min-width: 28px; height: 28px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .choice-item.selected .choice-id { background: var(--teal); border-color: var(--teal); color: var(--navy); }
+  .choice-item.ranked .choice-id { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+  .choice-text { font-size: 13px; line-height: 1.6; color: var(--grey2); flex: 1; }
+  .choice-item.selected .choice-text, .choice-item.ranked .choice-text { color: var(--white); }
+  .rank-badge {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--gold);
+    color: var(--navy);
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .select-counter {
+    font-size: 12px;
+    color: var(--grey);
+    margin-bottom: 10px;
+    text-align: right;
+  }
+  .select-counter span { color: var(--teal); font-weight: 700; }
+  .submit-area {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .submit-hint { font-size: 12px; color: var(--grey); flex: 1; }
+  .overtime-warning {
+    background: rgba(239,71,111,0.1);
+    border: 1px solid rgba(239,71,111,0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar-header {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--grey);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: sticky;
+    top: 0;
+    background: rgba(11,18,30,0.95);
+    backdrop-filter: blur(8px);
+    z-index: 1;
+  }
+  .sidebar-dot {
+    width: 6px; height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .feed-cards { padding: 12px; }
+  .feed-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .feed-card.email { border-left: 2px solid var(--teal); }
+  .feed-card.corridor { border-left: 2px solid var(--gold); }
+  .feed-card.calendar { border-left: 2px solid var(--grey); }
+  .feed-card-type {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--grey);
+    margin-bottom: 4px;
+  }
+  .feed-card.email .feed-card-type { color: var(--teal); }
+  .feed-card.corridor .feed-card-type { color: var(--gold); }
+  .feed-from { font-weight: 700; color: var(--grey2); margin-bottom: 2px; }
+  .feed-subject { font-weight: 600; margin-bottom: 6px; color: var(--white); }
+  .feed-body { color: var(--grey); line-height: 1.5; }
+
+  /* ── GOSSIP TRANSITION ── */
+  #screen-gossip {
+    align-items: center;
+    justify-content: flex-start;
+    padding: 80px 24px 40px;
+    flex-direction: column;
+  }
+  .gossip-time {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--teal);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  .gossip-subtitle {
+    font-size: 12px;
+    color: var(--grey);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+  }
+  .gossip-feed {
+    max-width: 700px;
+    width: 100%;
+  }
+  .gossip-feed-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--grey);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gossip-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+    animation: slideIn 0.4s ease forwards;
+    opacity: 0;
+  }
+  .gossip-card.email-card { border-left: 3px solid var(--teal); }
+  .gossip-card.corridor-card { border-left: 3px solid var(--gold); }
+  .gossip-card.calendar-card { border-left: 3px solid var(--grey); }
+  .gossip-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .gossip-type-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .email-card .gossip-type-label { background: rgba(0,180,216,0.15); color: var(--teal); }
+  .corridor-card .gossip-type-label { background: rgba(244,162,97,0.15); color: var(--gold); }
+  .calendar-card .gossip-type-label { background: rgba(255,255,255,0.08); color: var(--grey); }
+  .gossip-time-sent { font-size: 11px; color: var(--grey); }
+  .gossip-from { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .gossip-subject { font-size: 13px; font-weight: 600; color: var(--grey2); margin-bottom: 8px; }
+  .gossip-body { font-size: 13px; line-height: 1.6; color: var(--grey); }
+  .gossip-cta { text-align: center; margin-top: 32px; }
+
+  /* ── REPORT ── */
+  #screen-report {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 80px 24px 60px;
+    width: 100%;
+    flex-direction: column;
+  }
+  .report-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .report-score-big {
+    font-size: 72px;
+    font-weight: 900;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .report-score-label { font-size: 14px; color: var(--grey); margin-bottom: 4px; }
+  .report-team-name { font-size: 22px; font-weight: 800; margin-bottom: 24px; }
+  .report-summary {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .report-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .report-stat-num { font-size: 28px; font-weight: 800; color: var(--teal); }
+  .report-stat-label { font-size: 11px; color: var(--grey); margin-top: 4px; }
+  .report-rounds { }
+  .report-round-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .report-round-item.correct { border-left: 3px solid var(--green); }
+  .report-round-item.partial { border-left: 3px solid var(--amber); }
+  .report-round-item.wrong { border-left: 3px solid var(--red); }
+  .report-round-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .report-round-title { font-size: 14px; font-weight: 700; }
+  .report-round-num { font-size: 11px; color: var(--grey); margin-bottom: 2px; }
+  .report-points-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .correct .report-points-badge { background: rgba(6,214,160,0.15); color: var(--green); }
+  .partial .report-points-badge { background: rgba(255,209,102,0.15); color: var(--amber); }
+  .wrong .report-points-badge { background: rgba(239,71,111,0.15); color: var(--red); }
+  .report-round-detail { display: none; }
+  .report-round-detail.open { display: block; }
+  .report-answer-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+  .report-answer-box {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .report-answer-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 4px; }
+  .report-explanation {
+    background: rgba(0,180,216,0.07);
+    border: 1px solid rgba(0,180,216,0.2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--grey2);
+    line-height: 1.6;
+  }
+  .report-explanation-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); margin-bottom: 6px; }
+  .report-footer { text-align: center; margin-top: 40px; }
+  .strengths-weaknesses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .sw-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .sw-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .sw-card.strength h3 { color: var(--green); }
+  .sw-card.weakness h3 { color: var(--amber); }
+  .sw-card ul { list-style: none; }
+  .sw-card li { font-size: 13px; color: var(--grey2); padding: 4px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
+  .sw-card li:last-child { border: none; }
+  .sw-card li::before { content: '→ '; color: var(--grey); }
+
+  /* ── COMPLETE ── */
+  #screen-complete {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px;
+  }
+  .complete-icon { font-size: 64px; margin-bottom: 20px; }
+  .complete-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+  .complete-text { font-size: 15px; color: var(--grey); max-width: 400px; line-height: 1.6; margin-bottom: 32px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-strip {
+    display: none;
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    position: fixed;
+    top: 58px; left: 0; right: 0;
+    z-index: 99;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal2), var(--teal));
+    border-radius: 0 2px 2px 0;
+    transition: width 0.6s ease;
+  }
+
+  /* ── UTILS ── */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .text-teal { color: var(--teal); }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .hidden { display: none !important; }
+
+  /* ── BACKGROUND PATTERNS ── */
+  .bg-grid {
+    background-image: 
+      linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .bg-dots {
+    background-image: radial-gradient(rgba(0,180,216,0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* ── SKIP BUTTON ── */
+  .skip-read-btn {
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--grey);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .skip-read-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ── PRODUCT GRID ── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    max-width: 560px;
+    margin: 0 auto 40px;
+  }
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 10px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  
+  .product-card.featured { border-color: rgba(0,180,216,0.4); background: rgba(0,180,216,0.06); }
+  .product-icon { margin-bottom: 8px; }
+  .product-name { font-size: 11px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+  .product-desc { font-size: 10px; color: var(--grey); line-height: 1.4; }
+  .product-crisis { font-size: 10px; color: var(--red); font-weight: 700; margin-top: 4px; }
+
+  /* ── FINANCIAL CARD ── */
+  .financial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .financial-card h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); margin-bottom: 14px; }
+  .fin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+  }
+  .fin-row:last-child { border: none; }
+  .fin-label { color: var(--grey2); }
+  .fin-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .fin-positive { color: var(--green); }
+  .fin-negative { color: var(--red); }
+  .fin-neutral { color: var(--white); }
+  .fin-pct { font-size: 11px; color: var(--grey); margin-left: 8px; }
+
+  /* ── ORG CHART ── */
+  .org-chart-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 16px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .org-chart-wrap h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--teal); margin-bottom: 20px; }
+  .org-svg { display: block; margin: 0 auto; }
+
+  /* ── CHARACTER CARDS ── */
+  .chars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .char-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+  .char-card:hover { border-color: rgba(255,255,255,0.2); }
+  .char-card.you { border-color: var(--teal); background: rgba(0,180,216,0.06); }
+  .char-card.ally { border-color: rgba(6,214,160,0.3); }
+  .char-card.neutral { border-color: rgba(255,209,102,0.2); }
+  .char-card.hostile { border-color: rgba(239,71,111,0.2); }
+  .char-avatar {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    color: var(--navy);
+  }
+  .char-card.you .char-avatar { background: var(--teal); }
+  .char-card.ally .char-avatar { background: var(--green); }
+  .char-card.neutral .char-avatar { background: var(--amber); }
+  .char-card.hostile .char-avatar { background: var(--red); }
+  .char-card.ceo .char-avatar { background: var(--gold); }
+  .char-card-name { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+  .char-card-role { font-size: 11px; color: var(--grey); line-height: 1.4; margin-bottom: 4px; }
+  .char-card-note { font-size: 11px; color: var(--grey2); line-height: 1.4; font-style: italic; }
+  .dept-tag {
+    display: inline-block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+  }
+  .dept-marketing { background: rgba(0,180,216,0.15); color: var(--teal); }
+  .dept-manufacturing { background: rgba(244,162,97,0.15); color: var(--gold); }
+  .dept-accounting { background: rgba(255,209,102,0.15); color: var(--amber); }
+  .dept-sales { background: rgba(6,214,160,0.15); color: var(--green); }
+  .dept-operations { background: rgba(255,255,255,0.1); color: var(--grey2); }
+  .dept-ceo { background: rgba(244,162,97,0.2); color: var(--gold); }
+
+  /* ── SECTION CHIP ── */
+  .section-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--teal);
+    background: rgba(0,180,216,0.1);
+    border: 1px solid rgba(0,180,216,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+  }
+
+  /* ── WELCOME VISUAL ── */
+  .welcome-visual {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+
+  /* ── CRISIS BANNER ── */
+  .crisis-banner {
+    background: rgba(239,71,111,0.08);
+    border: 1px solid rgba(239,71,111,0.25);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .crisis-icon { font-size: 24px; flex-shrink: 0; }
+  .crisis-text { font-size: 13px; color: var(--grey2); line-height: 1.6; }
+  .crisis-text strong { color: var(--red); }
+
+  .like-meter {
+    background: var(--card);
+    border: 1px solid rgba(255,209,102,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  /* MINI-GAME SCREENS */
+  .minigame-screen {
+    text-align: center;
+    padding: 32px 24px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .minigame-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .minigame-subtitle { font-size: 13px; color: var(--grey); margin-bottom: 24px; line-height: 1.6; }
+  .minigame-principle {
+    display: inline-block;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    font-weight: 700;
+    padding: 4px 12px; border-radius: 20px;
+    background: rgba(0,180,216,0.12); color: var(--teal);
+    border: 1px solid rgba(0,180,216,0.25);
+    margin-bottom: 20px;
+  }
+  .minigame-reward {
+    font-size: 13px; color: var(--green); font-weight: 700;
+    margin-top: 16px;
+    background: rgba(6,214,160,0.1);
+    border: 1px solid rgba(6,214,160,0.2);
+    border-radius: 8px; padding: 10px 16px;
+  }
+  /* WATER COOLER */
+  .cooler-scene {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+    margin-bottom: 16px;
+  }
+  .cooler-char {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .cooler-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: var(--navy); flex-shrink: 0;
+  }
+  .cooler-bubble {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 0 12px 12px 12px;
+    padding: 12px 16px;
+    font-size: 13px; color: var(--grey2);
+    line-height: 1.6; flex: 1;
+  }
+  .cooler-options { display: flex; flex-direction: column; gap: 8px; }
+  .cooler-option {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 16px;
+    font-size: 13px; cursor: pointer;
+    transition: all 0.2s; text-align: left;
+    color: var(--grey2);
+    min-height: 52px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cooler-option:hover { border-color: var(--teal); color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    /* Game layout */
+    .game-layout { grid-template-columns: 1fr; height: auto; min-height: calc(100vh - 58px); }
+    .game-sidebar { display: none; }
+    .game-main { padding: 16px; }
+
+    /* Briefing */
+    .info-grid, .report-answer-row, .strengths-weaknesses { grid-template-columns: 1fr; }
+    .org-chart-wrap { padding: 16px 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .chars-grid { grid-template-columns: 1fr; }
+    .char-card { padding: 12px; }
+    .org-svg { min-width: 600px; }
+
+    /* Welcome */
+    .welcome-grid { grid-template-columns: 1fr 1fr; max-width: 300px; }
+    .product-grid { grid-template-columns: 1fr 1fr; max-width: 100%; gap: 8px; }
+    .product-card { padding: 12px 8px; }
+    .welcome-title { font-size: 32px; }
+    .welcome-sub { font-size: 14px; }
+
+    /* Register */
+    .register-card { padding: 28px 20px; margin: 0 16px; }
+
+    /* Round */
+    .round-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .timer-block { width: 100%; min-width: unset; }
+    .scenario-box { font-size: 13px; padding: 16px; }
+    .choice-item { padding: 16px 14px; }
+    .choice-text { font-size: 13px; }
+    .submit-area { flex-direction: column; align-items: stretch; }
+    .submit-area .btn-primary,
+    .submit-area .btn-secondary { width: 100%; text-align: center; padding: 16px; font-size: 15px; }
+    .skip-read-btn { width: 100%; text-align: center; padding: 12px; margin-top: 8px; }
+
+    /* Header */
+    .logo-sub { display: none; }
+    .header { padding: 0 12px; }
+    .header-center { gap: 10px; }
+    .clock-display { font-size: 15px; padding: 3px 8px; letter-spacing: 1px; }
+    .like-meter { font-size: 10px; padding: 3px 8px; }
+
+    /* Report */
+    .report-summary { grid-template-columns: 1fr 1fr; }
+    .report-score-big { font-size: 52px; }
+    .report-round-item { padding: 14px; }
+
+    /* Gossip transition */
+    .gossip-time { font-size: 36px; }
+    .gossip-feed { padding: 0 8px; }
+    .gossip-card { padding: 14px; }
+
+    /* Mini-games */
+    .minigame-screen { padding: 20px 16px; }
+    .cooler-option { padding: 14px 12px; font-size: 13px; min-height: 54px; }
+    .cooler-bubble { font-size: 12px; }
+    .cooler-avatar { width: 38px; height: 38px; font-size: 12px; }
+    .fin-row { font-size: 12px; }
+
+    /* Briefing sections */
+    .briefing-header { flex-direction: column; gap: 12px; padding: 20px; }
+    .section-chip { font-size: 9px; }
+    .crisis-banner { flex-direction: column; gap: 8px; padding: 14px; }
+    .financial-card { padding: 14px; }
+  }
+
+  /* Phone-specific: 480px and below */
+  @media (max-width: 480px) {
+    .welcome-title { font-size: 28px; }
+    .welcome-stat-num { font-size: 22px; }
+    .product-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .product-name { font-size: 10px; }
+    .product-desc { font-size: 9px; }
+    .welcome-grid { grid-template-columns: 1fr 1fr 1fr; max-width: 100%; }
+    .welcome-stat { padding: 10px 6px; }
+    .register-card { padding: 24px 16px; margin: 0 8px; }
+    .name-input { font-size: 16px; padding: 12px 14px; }
+    .header { height: 52px; }
+    .screen { padding-top: 52px; }
+    .progress-strip { top: 52px; }
+    .lang-btn { padding: 4px 7px; font-size: 10px; }
+    .team-badge { font-size: 10px; padding: 3px 8px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .choice-item { padding: 14px 12px; }
+    .choice-id { min-width: 24px; height: 24px; font-size: 11px; }
+    .round-subtitle { font-size: 10px; }
+    .phase-badge { font-size: 10px; padding: 3px 8px; }
+    .timer-value { font-size: 20px; }
+    .scenario-box { font-size: 12px; line-height: 1.7; padding: 14px; }
+    .gossip-time { font-size: 30px; letter-spacing: 2px; }
+    .report-score-big { font-size: 44px; }
+    .report-summary { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .report-stat-num { font-size: 22px; }
+    .report-stat-label { font-size: 10px; }
+    .chars-grid { gap: 8px; }
+    .char-card { padding: 10px; }
+    .char-card-name { font-size: 12px; }
+    .char-card-note { font-size: 10px; }
+    .btn-primary { padding: 14px 24px; font-size: 14px; }
+    .cooler-option { font-size: 12px; padding: 14px 10px; }
+    .complete-icon { font-size: 48px; }
+    .complete-title { font-size: 22px; }
+    .org-chart-wrap { padding: 12px 4px; }
+  }
+
+  .char-panel-btn { position:fixed;bottom:20px;right:20px;z-index:1000;width:48px;height:48px;border-radius:50%;background:var(--teal);color:var(--navy);border:none;font-size:22px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);display:none;touch-action:manipulation; }
+  .char-panel { position:fixed;top:0;right:-420px;width:400px;max-width:90vw;height:100vh;background:var(--navy);border-left:1px solid var(--border);z-index:1001;overflow-y:auto;padding:60px 20px 20px;transition:right 0.3s;box-shadow:-4px 0 20px rgba(0,0,0,0.4); }
+  .char-panel.open { right:0; }
+  .char-panel-close { position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);color:var(--grey);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px; }
+  .char-panel-card { background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px; }
+  .char-panel-name { font-weight:700;font-size:13px;margin-bottom:2px; }
+  .char-panel-role { font-size:11px;color:var(--grey);margin-bottom:6px; }
+  .char-panel-desc { font-size:11px;color:var(--grey2);line-height:1.5;display:none; }
+  .char-panel-toggle { font-size:10px;color:var(--teal);cursor:pointer;background:none;border:none;padding:0;margin-top:4px; }
+  @media(max-width:480px){ .char-panel{width:100vw;max-width:100vw;right:-100vw;} .char-panel-btn{bottom:16px;right:16px;width:44px;height:44px;} }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-mark">VTI</div>
+    <div>
+      <div class="logo-text">Virtual Technologies, Inc.</div>
+      <div class="logo-sub" data-t="portal">Confluenza</div>
+    </div>
+  </div>
+  <div class="header-center">
+    <div class="clock-display" id="header-clock">08:00</div>
+    <div class="round-badge" id="round-badge"></div>
+  </div>
+  <div class="header-right">
+    <div class="team-badge" id="team-badge"></div>
+    <div class="like-meter" id="like-meter" style="display:none"><span id="like-val">50</span>% <span data-t="like_label">Likability</span></div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('it')">IT</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="progress-strip" id="progress-strip">
+  <div class="progress-fill" id="progress-fill"></div>
+</div>
+
+<!-- ═══════════════════ WELCOME ═══════════════════ -->
+<div class="screen active bg-grid" id="screen-welcome" style="padding:80px 16px 40px;align-items:center;justify-content:center;text-align:center">
+  <div class="welcome-tagline" data-t="welcome_tagline">Influence Lab · VTI</div>
+  <h1 class="welcome-title"><span data-t="welcome_title1">Influenza</span><span data-t="welcome_title2">Senza Autorità</span></h1>
+  <p class="welcome-sub" data-t="welcome_sub">Sei un Product Manager in VTI. Virtu-Fit è in crisi. Hai un giorno per salvarlo — senza potere gerarchico, solo influenza.</p>
+
+  <!-- Product grid -->
+  <div class="product-grid">
+    <div class="product-card">
+      <div class="product-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="8" width="28" height="20" rx="3" fill="none" stroke="#8fa3b8" stroke-width="1.5"/><circle cx="18" cy="18" r="5" fill="none" stroke="#8fa3b8" stroke-width="1.5"/><line x1="4" y1="28" x2="14" y2="32" stroke="#8fa3b8" stroke-width="1.5"/><line x1="32" y1="28" x2="22" y2="32" stroke="#8fa3b8" stroke-width="1.5"/></svg>
+      </div>
+      <div class="product-name">Virtu-Man</div>
+      <div class="product-desc">Console VR per gaming domestico</div>
+    </div>
+    <div class="product-card">
+      <div class="product-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36"><rect x="2" y="6" width="32" height="22" rx="2" fill="none" stroke="#8fa3b8" stroke-width="1.5"/><line x1="2" y1="14" x2="34" y2="14" stroke="#8fa3b8" stroke-width="1"/><line x1="10" y1="6" x2="10" y2="28" stroke="#8fa3b8" stroke-width="1"/><circle cx="6" cy="10" r="1.5" fill="#8fa3b8"/></svg>
+      </div>
+      <div class="product-name">Virtu-Wall</div>
+      <div class="product-desc">Proiettore olografico da parete</div>
+    </div>
+    <div class="product-card featured">
+      <div class="product-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36"><ellipse cx="18" cy="14" rx="7" ry="9" fill="none" stroke="#00B4D8" stroke-width="1.5"/><path d="M11 14 Q8 22 18 26 Q28 22 25 14" fill="none" stroke="#00B4D8" stroke-width="1.5"/><line x1="18" y1="26" x2="18" y2="32" stroke="#00B4D8" stroke-width="1.5"/><line x1="12" y1="30" x2="24" y2="30" stroke="#00B4D8" stroke-width="1.5"/></svg>
+      </div>
+      <div class="product-name" style="color:var(--teal)">Virtu-Fit</div>
+      <div class="product-desc">Sport & fitness — 3 generazioni</div>
+      <div class="product-crisis">▼ 27% sotto target</div>
+    </div>
+    <div class="product-card">
+      <div class="product-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="4" width="28" height="28" rx="4" fill="none" stroke="#8fa3b8" stroke-width="1.5"/><rect x="8" y="8" width="8" height="8" rx="1" fill="none" stroke="#8fa3b8" stroke-width="1"/><rect x="20" y="8" width="8" height="8" rx="1" fill="none" stroke="#8fa3b8" stroke-width="1"/><rect x="8" y="20" width="8" height="8" rx="1" fill="none" stroke="#8fa3b8" stroke-width="1"/><rect x="20" y="20" width="8" height="8" rx="1" fill="rgba(139,163,184,0.3)" stroke="#8fa3b8" stroke-width="1"/></svg>
+      </div>
+      <div class="product-name">HoloRoom</div>
+      <div class="product-desc">Ricostruzione scene 3D industriale</div>
+    </div>
+  </div>
+
+  <div class="welcome-grid">
+    <div class="welcome-stat">
+      <div class="welcome-stat-num">13</div>
+      <div class="welcome-stat-label" data-t="stat_moments">Momenti</div>
+    </div>
+    <div class="welcome-stat">
+      <div class="welcome-stat-num">12'</div>
+      <div class="welcome-stat-label" data-t="stat_per_round">Per round</div>
+    </div>
+    <div class="welcome-stat">
+      <div class="welcome-stat-num">162</div>
+      <div class="welcome-stat-label" data-t="stat_points">Punti max</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="showScreen('register')" data-t="btn_start">Inizia la Simulazione</button>
+</div>
+
+<!-- ═══════════════════ REGISTER ═══════════════════ -->
+<div class="screen" id="screen-register">
+  <div class="register-card">
+    <div style="font-size:36px;margin-bottom:12px;">🏷️</div>
+    <h2 data-t="reg_title">Nome del Tuo Team</h2>
+    <p data-t="reg_sub">Scegli un nome unico per il tuo team. <strong>Includi un numero e un simbolo</strong> per renderlo inconfondibile — es. <em>Falcon#7, VTI★03, Alpha&9</em></p>
+    <div class="input-group">
+      <input type="text" id="team-name-input" class="name-input" maxlength="30"
+        data-placeholder-it="es. Falcon#7 oppure Alpha★3"
+        data-placeholder-en="e.g. Falcon#7 or Alpha★3"
+        placeholder="es. Falcon#7 oppure Alpha★3"
+        oninput="onNameInput()"
+        onkeydown="if(event.key==='Enter')tryRegister()">
+    </div>
+    <div class="input-hint" data-t="reg_hint">Il nome è visibile nella classifica. Usa numeri + simboli: #, ★, &, @, _, +</div>
+    <div class="input-status" id="name-status"></div>
+    <button class="btn-primary" id="btn-register" onclick="tryRegister()" disabled data-t="btn_register">Registra il Team</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ BRIEFING ═══════════════════ -->
+<div class="screen" id="screen-briefing" style="padding-bottom:40px">
+  <div class="briefing-header">
+    <div class="briefing-icon">🗂️</div>
+    <div>
+      <h1 data-t="brief_title">Il Tuo Contesto</h1>
+      <p data-t="brief_sub">Prima di iniziare, studia l'azienda, il tuo ruolo e i personaggi chiave.</p>
+    </div>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="section-chip" data-t="brief_chip_company">🏢 L'Azienda</div>
+      <p style="font-size:13px;line-height:1.7;color:var(--grey2)" data-t="brief_company_body"></p>
+    </div>
+    <div class="financial-card" style="margin-bottom:0">
+      <div class="section-chip" data-t="fin_title">📊 Rapporto Finanziario VTI</div>
+      <div class="fin-row"><span class="fin-label" data-t="fin_revenue">Fatturato</span><span class="fin-value fin-neutral">$550M</span></div>
+      <div class="fin-row"><span class="fin-label" data-t="fin_cogs">Costo del Venduto (COGS)</span><span class="fin-value fin-neutral">$275M <span class="fin-pct">(50%)</span></span></div>
+      <div class="fin-row"><span class="fin-label" data-t="fin_gross">Margine Lordo</span><span class="fin-value fin-positive">$275M <span class="fin-pct">(50%)</span></span></div>
+      <div class="fin-row"><span class="fin-label" data-t="fin_sga">Spese Generali (SG&amp;A)</span><span class="fin-value fin-neutral">$247.5M <span class="fin-pct">(45%)</span></span></div>
+      <div class="fin-row"><span class="fin-label" data-t="fin_operating">Reddito Operativo</span><span class="fin-value fin-positive">$27.5M <span class="fin-pct">(5%)</span></span></div>
+      <div class="fin-row"><span class="fin-label" data-t="fin_econ">Profitto Economico</span><span class="fin-value fin-negative">−$39.6M <span class="fin-pct">(-7%)</span></span></div>
+    </div>
+  </div>
+  <div class="crisis-banner">
+    <div class="crisis-icon">⚠️</div>
+    <div class="crisis-text" data-t="brief_crisis_body"></div>
+  </div>
+  <div class="org-chart-wrap">
+    <div class="section-chip" data-t="brief_chip_org">🏗️ Struttura Organizzativa</div>
+    <svg class="org-svg" width="720" height="310" viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">
+      <line x1="360" y1="64" x2="360" y2="90" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="100" y1="90" x2="620" y2="90" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="100" y1="90" x2="100" y2="118" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="240" y1="90" x2="240" y2="118" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="380" y1="90" x2="380" y2="118" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="510" y1="90" x2="510" y2="118" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="620" y1="90" x2="620" y2="118" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="100" y1="172" x2="100" y2="196" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="50" y1="196" x2="190" y2="196" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="50" y1="196" x2="50" y2="222" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="190" y1="196" x2="190" y2="222" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="510" y1="172" x2="510" y2="196" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="450" y1="196" x2="580" y2="196" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="450" y1="196" x2="450" y2="222" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="580" y1="196" x2="580" y2="222" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <rect x="294" y="12" width="132" height="52" rx="8" fill="rgba(244,162,97,0.15)" stroke="rgba(244,162,97,0.5)" stroke-width="1.5"/>
+      <text x="360" y="32" text-anchor="middle" fill="#F4A261" font-size="11" font-weight="700" font-family="Segoe UI,sans-serif">O.C. TAFT</text>
+      <text x="360" y="47" text-anchor="middle" fill="#8fa3b8" font-size="10" font-family="Segoe UI,sans-serif">Founder &amp; CEO</text>
+      <text x="360" y="59" text-anchor="middle" fill="rgba(244,162,97,0.7)" font-size="9" font-family="Segoe UI,sans-serif">EXECUTIVE</text>
+      <rect x="46" y="118" width="108" height="54" rx="6" fill="rgba(0,180,216,0.1)" stroke="rgba(0,180,216,0.35)" stroke-width="1.5"/>
+      <text x="100" y="136" text-anchor="middle" fill="#00B4D8" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">F. MILLER</text>
+      <text x="100" y="149" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Dir. Marketing</text>
+      <text x="100" y="164" text-anchor="middle" fill="rgba(0,180,216,0.7)" font-size="9" font-family="Segoe UI,sans-serif">MARKETING</text>
+      <rect x="186" y="118" width="108" height="54" rx="6" fill="rgba(255,209,102,0.08)" stroke="rgba(255,209,102,0.3)" stroke-width="1.5"/>
+      <text x="240" y="136" text-anchor="middle" fill="#ffd166" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">L. WIRTH ❓</text>
+      <text x="240" y="149" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Mgr. Accounting</text>
+      <text x="240" y="164" text-anchor="middle" fill="rgba(255,209,102,0.7)" font-size="9" font-family="Segoe UI,sans-serif">NEUTRALE</text>
+      <rect x="326" y="118" width="108" height="54" rx="6" fill="rgba(239,71,111,0.08)" stroke="rgba(239,71,111,0.25)" stroke-width="1.5"/>
+      <text x="380" y="136" text-anchor="middle" fill="#ef476f" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">G. HERTZHAFT</text>
+      <text x="380" y="149" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Dir. Operations</text>
+      <text x="380" y="164" text-anchor="middle" fill="rgba(239,71,111,0.8)" font-size="9" font-family="Segoe UI,sans-serif">CONTRARIO ✗</text>
+      <rect x="456" y="118" width="108" height="54" rx="6" fill="rgba(244,162,97,0.1)" stroke="rgba(244,162,97,0.3)" stroke-width="1.5"/>
+      <text x="510" y="136" text-anchor="middle" fill="#F4A261" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">T. UTTRIDGE ❓</text>
+      <text x="510" y="149" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Dir. Manufacturing</text>
+      <text x="510" y="164" text-anchor="middle" fill="rgba(255,209,102,0.7)" font-size="9" font-family="Segoe UI,sans-serif">NEUTRALE</text>
+      <rect x="566" y="118" width="108" height="54" rx="6" fill="rgba(6,214,160,0.1)" stroke="rgba(6,214,160,0.3)" stroke-width="1.5"/>
+      <text x="620" y="136" text-anchor="middle" fill="#06d6a0" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">K. KISSEL ✓</text>
+      <text x="620" y="149" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Dir. Sales</text>
+      <text x="620" y="164" text-anchor="middle" fill="rgba(6,214,160,0.8)" font-size="9" font-family="Segoe UI,sans-serif">FAVOREVOLE</text>
+      <rect x="4" y="222" width="92" height="52" rx="6" fill="rgba(6,214,160,0.1)" stroke="rgba(6,214,160,0.35)" stroke-width="1.5"/>
+      <text x="50" y="239" text-anchor="middle" fill="#06d6a0" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">N. HUFFMAN</text>
+      <text x="50" y="252" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Sr. Mgr. Mkt.</text>
+      <text x="50" y="265" text-anchor="middle" fill="rgba(6,214,160,0.8)" font-size="9" font-family="Segoe UI,sans-serif">IL TUO CAPO ✓</text>
+      <rect x="140" y="222" width="100" height="52" rx="6" fill="rgba(0,180,216,0.2)" stroke="#00B4D8" stroke-width="2"/>
+      <text x="190" y="239" text-anchor="middle" fill="#00B4D8" font-size="11" font-weight="800" font-family="Segoe UI,sans-serif">⭐ TU</text>
+      <text x="190" y="252" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">PM Virtu-Fit</text>
+      <text x="190" y="265" text-anchor="middle" fill="rgba(0,180,216,0.8)" font-size="9" font-family="Segoe UI,sans-serif">MARKETING</text>
+      <rect x="404" y="222" width="92" height="52" rx="6" fill="rgba(239,71,111,0.1)" stroke="rgba(239,71,111,0.4)" stroke-width="1.5"/>
+      <text x="450" y="239" text-anchor="middle" fill="#ef476f" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">S. LORICKE ✗</text>
+      <text x="450" y="252" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Sr. Eng. I-Mfg.</text>
+      <text x="450" y="265" text-anchor="middle" fill="rgba(239,71,111,0.8)" font-size="9" font-family="Segoe UI,sans-serif">OSTILE</text>
+      <rect x="504" y="222" width="92" height="52" rx="6" fill="rgba(6,214,160,0.08)" stroke="rgba(6,214,160,0.25)" stroke-width="1"/>
+      <text x="550" y="239" text-anchor="middle" fill="#06d6a0" font-size="10" font-weight="700" font-family="Segoe UI,sans-serif">C. FUERTES</text>
+      <text x="550" y="252" text-anchor="middle" fill="#c5d3de" font-size="10" font-family="Segoe UI,sans-serif">Team Member</text>
+      <text x="550" y="265" text-anchor="middle" fill="rgba(6,214,160,0.7)" font-size="9" font-family="Segoe UI,sans-serif">CONTATTO ✓</text>
+      <rect x="4" y="292" width="10" height="10" rx="2" fill="rgba(0,180,216,0.2)" stroke="#00B4D8" stroke-width="1.5"/>
+      <text x="18" y="302" fill="#8fa3b8" font-size="9" font-family="Segoe UI,sans-serif">Tu / Alleato</text>
+      <rect x="80" y="292" width="10" height="10" rx="2" fill="rgba(255,209,102,0.08)" stroke="rgba(255,209,102,0.3)" stroke-width="1"/>
+      <text x="94" y="302" fill="#8fa3b8" font-size="9" font-family="Segoe UI,sans-serif">Neutrale</text>
+      <rect x="148" y="292" width="10" height="10" rx="2" fill="rgba(239,71,111,0.1)" stroke="rgba(239,71,111,0.4)" stroke-width="1"/>
+      <text x="162" y="302" fill="#8fa3b8" font-size="9" font-family="Segoe UI,sans-serif">Ostile / Contrario</text>
+    </svg>
+  </div>
+  <div class="section-chip" data-t="brief_chip_chars">👥 Profili Personaggi</div>
+  <div style="font-size:11px;color:var(--grey);margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px">🟢 Favorevole = supporta il progetto · 🟡 Neutrale = non si è espresso · 🔴 Contrario = si oppone</div>
+    <div class="chars-grid">
+    <div class="char-card ceo">
+      <div class="char-avatar" data-t="avatar_ceo">OC</div>
+      <div><div class="dept-tag dept-ceo">CEO</div><div class="char-card-name"><span data-name="CEO">Oscar C. Taft</span></div><div class="char-card-role">Founder &amp; CEO · VTI</div><div class="char-card-note">Ex marketing consumer electronics. Visionario, orientato all'innovazione. Decisore finale.</div></div>
+    </div>
+    <div class="char-card you">
+      <div class="char-avatar" data-t="avatar_manuf">TU</div>
+      <div><div class="dept-tag dept-marketing">Marketing</div><div class="char-card-name" data-t="char_you_label">Tu — Product Manager</div><div class="char-card-role">Virtu-Fit · 6° anno in VTI</div><div class="char-card-note">Conosci Marketing e hai contatti in Vendite. Nessuna autorità formale sugli altri reparti.</div></div>
+    </div>
+    <div class="char-card ally">
+      <div class="char-avatar" data-t="avatar_boss">NF</div>
+      <div><div class="dept-tag dept-marketing">Marketing</div><div class="char-card-name"><span data-name="BOSS">Noel Huffman</span></div><div class="char-card-role">Sr. Marketing Manager — tuo capo</div><div class="char-card-note">Popolare, molto informato, razionale. Approcci basati sui fatti. Alleato solido.</div></div>
+    </div>
+    <div class="char-card neutral">
+      <div class="char-avatar" data-t="avatar_acct">LB</div>
+      <div><div class="dept-tag dept-accounting">Accounting</div><div class="char-card-name"><span data-name="ACCT">Lionel Wirth</span></div><div class="char-card-role">Manager, Accounting — Neutrale</div><div class="char-card-note">"Pungente, senza fronzoli." Risponde solo ai numeri. 20 anni in VTI. Porta talenti dalla sua alma mater.</div></div>
+    </div>
+    <div class="char-card neutral">
+      <div class="char-avatar" data-t="avatar_manuf">TU</div>
+      <div><div class="dept-tag dept-manufacturing">Manufacturing</div><div class="char-card-name"><span data-name="MANUF">Tara Uttridge</span></div><div class="char-card-role">Director, Industrial Mfg — Neutrale</div><div class="char-card-note">7 anni in VTI. Ha rilanciato Virtu-Man. Valorizza il "out-of-the-box". Eccellente comunicatrice.</div></div>
+    </div>
+    <div class="char-card hostile">
+      <div class="char-avatar" data-t="avatar_antag">SL</div>
+      <div><div class="dept-tag dept-manufacturing">Manufacturing</div><div class="char-card-name"><span data-name="ANTAG">Sam Loricke</span></div><div class="char-card-role">Sr. Engineer, I-Mfg — Ostile</div><div class="char-card-note">"L'uomo Teflon." VP Manufacturing lo sponsorizza. Odia la debolezza. Bisogna raggiungerlo indirettamente.</div></div>
+    </div>
+    <div class="char-card ally">
+      <div class="char-avatar" data-t="avatar_sales">CC</div>
+      <div><div class="dept-tag dept-sales">Sales</div><div class="char-card-name"><span data-name="SALES">Katherine Kissel</span></div><div class="char-card-role">Director, Sales — Favorevole</div><div class="char-card-note">"Il Martello di Velluto." 10 anni in VTI. Client-first. Team coeso. Favorevole al progetto.</div></div>
+    </div>
+    <div class="char-card hostile" style="border-color:rgba(239,71,111,0.2)">
+      <div class="char-avatar" style="background:#c44" data-t="avatar_ops">GE</div>
+      <div><div class="dept-tag dept-operations">Operations</div><div class="char-card-name"><span data-name="OPS">Greg Hertzhaft</span></div><div class="char-card-role">Director, Operations — Contrario</div><div class="char-card-note">Competente, non relazionale. Focus su efficienza e costi. Contrario al progetto.</div></div>
+    </div>
+  </div>
+  <div class="briefing-cta">
+    <button class="btn-primary" onclick="startGame()" data-t="btn_start_game">▶ Inizia il Giorno — 08:00</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ ROUND SCREEN ═══════════════════ -->
+<div class="screen" id="screen-round">
+  <div class="game-layout">
+    <div class="game-main" id="game-main">
+      <!-- filled by JS -->
+    </div>
+    <div class="game-sidebar">
+      <div class="sidebar-header" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <div style="display:flex;align-items:center;gap:8px"><div class="sidebar-dot"></div>
+        <span data-t="feed_label">Feed Corridoio</span></div>
+        <button onclick="document.getElementById('feed-cards').innerHTML=''" style="background:none;border:1px solid var(--border);color:var(--grey);font-size:10px;padding:2px 6px;border-radius:4px;cursor:pointer" title="Pulisci feed">✕</button>
+      </div>
+      <div class="feed-cards" id="feed-cards">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ GOSSIP TRANSITION ═══════════════════ -->
+<div class="screen" id="screen-gossip" style="padding-bottom:40px">
+  <div class="gossip-time" id="gossip-clock">09:30</div>
+  <div class="gossip-subtitle" data-t="gossip_sub">— In attesa del prossimo momento —</div>
+  <div class="gossip-feed" id="gossip-feed">
+    <div class="gossip-feed-title">
+      <div class="sidebar-dot"></div>
+      <span data-t="gossip_new">Nuovi messaggi e notizie</span>
+    </div>
+    <!-- filled by JS -->
+  </div>
+  <div class="gossip-cta">
+    <button class="btn-primary" id="btn-next-round" onclick="advanceRound()" data-t="btn_next_round">Prossimo Momento →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ REPORT ═══════════════════ -->
+<div class="screen" id="screen-report">
+  <div class="report-header">
+    <div class="report-team-name" id="report-team-name"></div>
+    <div class="report-score-big" id="report-score-big">0</div>
+    <div class="report-score-label"><span data-t="report_score_of">punti su</span> <span id="report-max-score">130</span></div>
+  </div>
+  <div class="report-summary" id="report-summary"></div>
+  <div class="strengths-weaknesses" id="sw-section"></div>
+  <div class="divider"></div>
+  <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--grey);margin-bottom:16px;" data-t="report_details">Dettaglio per Momento</h3>
+  <div class="report-rounds" id="report-rounds"></div>
+  <div class="report-footer">
+    <p style="font-size:13px;color:var(--grey);margin-bottom:20px;" data-t="report_footer_text">Usa questo report nel debriefing con il tuo trainer.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ COMPLETE ═══════════════════ -->
+<div class="screen" id="screen-complete">
+  <div class="complete-icon">🏁</div>
+  <h2 class="complete-title" data-t="complete_title">Simulazione Completata</h2>
+  <p class="complete-text" data-t="complete_text">Hai completato tutti i 13 momenti. Il tuo report è pronto. Discutilo con il trainer durante il debriefing.</p>
+  <button class="btn-primary" onclick="showReport()" data-t="btn_see_report">Vedi il Mio Report</button>
+</div>
+
+<script>
+function toggleCharPanel(){document.getElementById('char-panel').classList.toggle('open');}
+const CHAR_PROFILES={
+  it:[
+    {name:'Oscar C. Taffi',i:'OC',role:'Fondatore & CEO',c:'var(--gold)',
+     d:'Ha lavorato come esperto di marketing di elettronica di consumo per 20 anni. Tutti lo chiamano "O.C." poiché non ama il suo nome di battesimo. È il Fondatore e CEO di VTI, con sede a Beacon, New York. Raramente si trova in ufficio e quando vi è presente non ama essere disturbato con problemi o brutte notizie: vuole soluzioni e risultati.'},
+    {name:'Noele Ferrari',i:'NF',role:'Sr. Marketing Manager — Il tuo capo',c:'var(--green)',
+     d:'Da 11 anni nel gruppo, è veramente popolare tra il senior management, i suoi pari e i suoi riporti. È sempre al corrente di tutto ed è quindi un\'ottima fonte di informazioni. È a capo di tutti i Product Manager di VTI. Sotto la sua direzione la funzione si è concentrata sulle cose davvero importanti. Nonostante la sua apparente socievolezza, non è guidato dalle emozioni: affronta sempre i problemi basandosi sui fatti e in modo distaccato.'},
+    {name:'Francesco Mellini',i:'FM',role:'Director, Marketing',c:'var(--teal)',
+     d:'Arrivato in VTI quest\'anno. Ha lavorato nell\'High-Tech per quasi tutta la sua carriera, costellata da molteplici premi e riconoscimenti per il successo delle sue campagne di marketing. Il suo orientamento all\'innovazione ha attratto il Search Committee di VTI. Ha una reputazione di essere una forte "Voice for Customer" all\'interno dell\'organizzazione Sales. È il tuo direttore diretto.'},
+    {name:'Leonardo Bianchi',i:'LB',role:'Manager, Accounting',c:'var(--amber)',
+     d:'Durante i suoi 20 anni con VTI, ha sviluppato una reputazione di individuo un po\' pungente, senza fronzoli, con uno stile di gestione punitivo. Ha portato un flusso costante di professionisti della finanza di talento nel dipartimento, prendendoli dalla sua alma mater. Ha la tendenza a sostenere ed essere supportato dai colleghi del Manufacturing. Le due aree hanno goduto a lungo di un rapporto basato sul reciproco obiettivo di redditività attraverso l\'innovazione di prodotto. La sua preoccupazione per le prestazioni di base lo ha portato a lanciare numerose iniziative di riduzione dei costi.'},
+    {name:'Teresa Uttini',i:'TU',role:'Director, Industrial Mfg.',c:'var(--amber)',
+     d:'Ha iniziato la sua carriera in VTI e gestisce il Manufacturing da 7 anni. Ha acquisito autorevolezza dopo aver guidato diverse innovazioni alla linea di produzione del Virtu-Man proprio in un momento in cui le vendite iniziavano a calare. Il suo ingegno ha riposizionato Virtu-Man in cima al settore delle console per videogiochi. Valorizza il pensare "Out-of-the-box" e per stimolare il pensiero creativo nei suoi ingegneri ha riorganizzato l\'I-Manufacturing in Team Autonomi. È un\'eccellente comunicatrice e spesso spiega la Vision di VTI ai gruppi di neo-assunti.'},
+    {name:'Sandro Lorini',i:'SL',role:'Sr. Engineer, I-Manufacturing',c:'var(--red)',
+     d:'È in VTI da molti anni. È a capo del gruppo di lavoro sull\'high performing nell\'I-Manufacturing che definisce gli standard per l\'innovazione e gli obiettivi di efficienza del reparto. È conosciuto e rispettato dal senior management ed è sponsorizzato dal Vice Presidente del Manufacturing. Conosciuto come "l\'uomo Teflon" per la sua capacità di uscire da situazioni difficili senza neanche un graffio. Odia la debolezza ma non ama le dimostrazioni autoritarie. Per arrivare a lui bisogna prima arrivare a quelli che rispetta e mostrare una forte convinzione personale.'},
+    {name:'Caterina Cissel',i:'CC',role:'Director, Sales',c:'var(--green)',
+     d:'È in VTI da 10 anni ed ha iniziato come Account Executive. È stata lei ad ottenere alcuni dei più importanti clienti di VTI e ritiene che la soddisfazione del cliente debba essere la mission di VTI. Spesso si scontra con Manufacturing, che aderisce strettamente alla vision sull\'innovazione di prodotto. Sotto la sua gestione le Sales sono diventate più coesive e produttive, con anni di performance sopra gli obiettivi. Conosciuta come "Il Martello di Velluto" per le sue raffinate capacità persuasive, è rispettata e apprezzata in tutta VTI.'},
+    {name:'Gregorio Ertz',i:'GE',role:'Director, Operations',c:'var(--red)',
+     d:'Coordina il vasto network distributivo di VTI ed è responsabile di svilupparlo attraverso una serie di partnership strategiche. È rispettato per le sue capacità tecniche ma non ama coltivare relazioni di lavoro con molta gente in VTI. Sotto di lui, le Operations si coordinano meglio con il Finance — una relazione spontanea dovuta al focus sull\'efficienza e il controllo dei costi di entrambi i dipartimenti. Il progetto Virtu-Fit non è una sua priorità.'},
+    {name:'Carlo Fuentes',i:'CF',role:'Team Member, I-Manufacturing',c:'var(--green)',
+     d:'È il tuo principale punto di contatto all\'interno di I-Manufacturing. Fa parte del team di indagine e dipende da te per l\'accesso alle informazioni e alle persone di Manufacturing. È professionale e motivato, ma ha bisogno del tuo supporto per navigare le resistenze interne, in particolare quelle di Sandro Lorini.'},
+  ],
+  en:[
+    {name:'Oscar C. Taft',i:'OC',role:'Founder & CEO',c:'var(--gold)',
+     d:'Worked as a consumer electronics marketing expert for 20 years. Everyone calls him "O.C." since he dislikes his given name. He is the Founder and CEO of VTI, working from headquarters in Beacon, New York. He is rarely in the office and when he is, he does not like to be disturbed with problems or bad news: he wants solutions and results.'},
+    {name:'Noel Huffman',i:'NH',role:'Sr. Marketing Manager — Your boss',c:'var(--green)',
+     d:'After 11 years with the group, he is genuinely popular with senior management, peers, and direct reports alike. He is always well-informed and is therefore an excellent source of intelligence. He leads all of VTI\'s Product Managers. Under his direction the function has sharpened its focus on what truly matters. Despite his apparent sociability, he is not driven by emotion: he always approaches problems with facts and in a detached manner.'},
+    {name:'Freeman Miller',i:'FM',role:'Director, Marketing',c:'var(--teal)',
+     d:'Joined VTI this year. He has worked in High-Tech for almost his entire career, marked by multiple awards and recognition for the success of his marketing campaigns. His innovation orientation attracted VTI\'s Search Committee. He has a reputation for being a strong "Voice for Customer" within the Sales organisation. He is your direct director.'},
+    {name:'Lionel Wirth',i:'LW',role:'Manager, Accounting',c:'var(--amber)',
+     d:'During his 20 years with VTI, he has developed a reputation for being somewhat sharp and no-nonsense, with a punitive management style. He has brought a steady stream of talented finance professionals into the department, recruiting from his own alma mater. He tends to support and be supported by his Manufacturing counterparts. The two areas have long shared a relationship built on their mutual objective of profitability through product innovation. His focus on baseline performance has led him to launch numerous successful cost-reduction initiatives.'},
+    {name:'Tara Uttridge',i:'TU',role:'Director, Industrial Mfg.',c:'var(--amber)',
+     d:'She began her career at VTI and has managed Manufacturing for 7 years. She gained authority by leading several innovations to the Virtu-Man production line at exactly the moment when sales were beginning to decline. Her ingenuity repositioned Virtu-Man at the top of the home console sector. She values out-of-the-box thinking and to stimulate creative thought among her engineers she reorganised I-Manufacturing into Autonomous Teams. She is an excellent communicator and often explains VTI\'s Vision to groups of new hires.'},
+    {name:'Sam Loricke',i:'SL',role:'Sr. Engineer, I-Manufacturing',c:'var(--red)',
+     d:'He has been at VTI for many years. He leads the high-performing working group in I-Manufacturing that sets the standards for innovation and efficiency objectives within the department. He is known and respected by senior management and is sponsored by the VP of Manufacturing. Known as "The Teflon Man" for his ability to emerge from difficult situations without a scratch. He hates weakness but does not like authoritarian displays either. To reach him you must first reach those he respects and demonstrate strong personal conviction.'},
+    {name:'Katherine Kissel',i:'KK',role:'Director, Sales',c:'var(--green)',
+     d:'She has been at VTI for 10 years and started as an Account Executive. She secured some of VTI\'s most important clients and firmly believes that customer satisfaction must be VTI\'s mission. She often clashes with Manufacturing, which adheres strictly to VTI\'s product innovation vision. Under her leadership Sales has become more cohesive and productive, with years of above-target performance. Known as "The Velvet Hammer" for her refined persuasive skills, she is respected and appreciated across VTI.'},
+    {name:'Greg Hertzhaft',i:'GH',role:'Director, Operations',c:'var(--red)',
+     d:'He coordinates VTI\'s vast distribution network and is responsible for developing it through strategic partnerships. He is respected for his technical skills but does not enjoy cultivating working relationships across VTI. Under his leadership, Operations coordinates most effectively with Finance — a natural relationship driven by both departments\' focus on efficiency and cost control. The Virtu-Fit project is not his priority.'},
+    {name:'Chuck Fuertes',i:'CF',role:'Team Member, I-Manufacturing',c:'var(--green)',
+     d:'He is your main point of contact within I-Manufacturing. He is part of the investigation team and depends on you for access to information and people within Manufacturing. He is professional and motivated, but needs your support to navigate internal resistance, particularly from Sam Loricke.'},
+  ]
+};
+function renderCharPanel(){
+  var ps=CHAR_PROFILES[state.lang],c=document.getElementById('char-panel-cards');
+  c.innerHTML='';
+  ps.forEach(function(p,idx){
+    var card=document.createElement('div');card.className='char-panel-card';
+    card.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div style="width:32px;height:32px;border-radius:50%;background:'+p.c+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--navy)">'+p.i+'</div><div><div class="char-panel-name">'+p.name+'</div><div class="char-panel-role">'+p.role+'</div></div></div><div class="char-panel-desc" id="cpd'+idx+'">'+p.d+'</div><button class="char-panel-toggle" onclick="var d=document.getElementById(\'cpd'+idx+'\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.textContent=d.style.display===\'none\'?\'▸ Dettagli\':\'▾ Chiudi\'">▸ Dettagli</button>';
+    c.appendChild(card);
+  });
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// CONFIGURATION
+// ═══════════════════════════════════════════════════════════
+const SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+// ── BILINGUAL CHARACTER NAMES ────────────────────────
+const NAMES = {
+  it: {
+    CEO: 'Oscar C. Taffi', BOSS: 'Noele Ferrari', MKTD: 'Francesco Mellini',
+    SALES: 'Caterina Cissel', MANUF: 'Teresa Uttini', ANTAG: 'Sandro Lorini',
+    OPS: 'Gregorio Ertz', ACCT: 'Leonardo Bianchi', CHUCK: 'Carlo Fuentes',
+    ZINAH: 'Zinah', LUCAS: 'Luca', MELN: 'Melania', PLAYER: 'Tu'
+  },
+  en: {
+    CEO: 'Oscar C. Taft', BOSS: 'Noel Huffman', MKTD: 'Freeman Miller',
+    SALES: 'Katherine Kissel', MANUF: 'Tara Uttridge', ANTAG: 'Sam Loricke',
+    OPS: 'Greg Hertzhaft', ACCT: 'Lionel Wirth', CHUCK: 'Chuck Fuertes',
+    ZINAH: 'Zinah', LUCAS: 'Lucas', MELN: 'Melanie', PLAYER: 'You'
+  }
+};
+function N(key) { return NAMES[state.lang][key] || key; }
+
+const T = {
+  it: {
+    portal: 'Confluenza', welcome_tagline: 'VTI · Confluenza',
+    welcome_title1: 'Confluenza',
+    welcome_title2: '', welcome_sub: 'L\'influenza come strumento di collaborazione cross-funzionale. Sei un Product Manager in VTI. Non hai autorità formale — solo la tua influenza.',
+    stat_moments: 'Momenti', stat_per_round: 'Per scenario', stat_points: 'Punti max',
+    btn_start: 'Inizia la Simulazione',
+    reg_title: 'Nome del Tuo Team', reg_sub: 'Scegli un nome unico. <strong>Includi un numero e un simbolo</strong> per renderlo inconfondibile — es. <em>Falcon#7, Alpha★3</em>',
+    reg_hint: 'Il nome è visibile nella classifica. Usa numeri + simboli: #, ★, &, @, _, +',
+    btn_register: 'Registra il Team',
+    brief_title: 'Il Tuo Contesto', brief_sub: 'Prima di iniziare, familiarizzati con l\'azienda, il tuo ruolo e i personaggi chiave.',
+    brief_company: 'L\'Azienda', brief_company_text: 'VTI (Virtual Technologies Inc.) è leader globale nell\'hardware e software per la realtà virtuale. Fondata nel 2001 da O.C. Taft, produce i sistemi Virtu-Man, Virtu-Wall, Virtu-Fit e HoloRoom. La linea Virtu-Fit è il prodotto più venduto — ma oggi è in crisi.',
+    brief_role: 'Il Tuo Ruolo', brief_role_text: 'Sei il Product Manager di Virtu-Fit nel reparto Marketing. Oggi è il tuo 6° anniversario in VTI. Non hai autorità formale su altri reparti. Tutto quello che puoi fare, lo fai con influenza.',
+    brief_chars: 'Personaggi Chiave',
+    char_you_label: 'Tu — Product Manager',
+    char_you_label: 'You — Product Manager',
+    char_you: 'Product Manager, Marketing Virtu-Fit', char_noel: 'Noele Ferrari — Sr. Marketing Manager, alleato',
+    char_sam: 'Sandro Lorini — Sr. Engineer, I-Manufacturing, ostile', char_tara: 'Teresa Uttini — Director, Industrial Manufacturing, neutrale',
+    char_lionel: 'Leonardo Bianchi — Manager, Accounting, neutrale', char_greg: 'Gregorio Ertz — Director, Operations, contrario',
+    char_katie: 'Caterina Cissel — Director, Sales, favorevole', char_chuck: 'Carlo Fuentes — Team Member, contatto Manufacturing',
+    brief_crisis: 'La Crisi', brief_crisis_text: 'Virtu-Fit è il 27% sotto le proiezioni. I concorrenti stanno bene. Devi scoprire cosa non va, costruire un team interfunzionale, indagare e presentare una soluzione — senza autorità formale.',
+    btn_start_game: '▶ Inizia il Giorno — 08:00',
+    read_phase: '📖 Fase di Lettura', answer_phase: '✏️ Rispondi Ora', overtime_phase: '⚠️ Tempo Scaduto (-5 punti)',
+    read_instruction: 'Leggi attentamente il momento. Le scelte si sbloccano tra',
+    read_unlocks: 'secondi.',
+    btn_skip_read: 'Vai alle Opzioni →',
+    choices_label_rank: 'Clicca per classificare in ordine di importanza',
+    choices_label_multi: 'Seleziona le opzioni corrette',
+    choices_label_single: 'Seleziona la risposta corretta',
+    rank_hint: 'Clicca una scelta per assegnarle il 1°, 2°, 3° ... posto. Clicca di nuovo per rimuovere.',
+    btn_submit: 'Conferma Risposta',
+    btn_reset: 'Azzera Selezione',
+    overtime_msg: 'Il tempo è scaduto. Sono stati detratti 5 punti. Puoi ancora rispondere.',
+    feed_label: 'Feed Corridoio', gossip_sub: '— In attesa del prossimo momento —',
+    gossip_new: 'Nuovi messaggi e notizie', btn_next_round: 'Prossimo Momento →',
+    report_score_of: 'punti su', report_details: 'Dettaglio per Momento',
+    report_your_answer: 'La Tua Risposta', report_correct: 'Risposta Corretta',
+    report_why: 'Perché', report_footer_text: 'Usa questo report nel debriefing con il trainer.',
+    complete_title: 'Simulazione Completata', complete_text: 'Hai completato tutti i 13 momenti. Il tuo report è pronto.',
+    btn_see_report: 'Vedi il Mio Report',
+    checking: 'Verifica in corso...', name_ok: '✓ Nome disponibile', name_taken: '✗ Nome già in uso — scegline un altro',
+    name_short: 'Il nome deve essere almeno 3 caratteri',
+    strengths_title: '✓ Hai fatto bene in', weaknesses_title: '↗ Puoi migliorare in',
+    correct_label: 'Corretto', partial_label: 'Parziale', wrong_label: 'Errato',
+    rank_instruction: 'Clicca le opzioni nell\'ordine che ritieni corretto (1°, 2°, 3°...)',
+    select_instruction: 'Seleziona esattamente',
+    select_of: 'di',
+    select_chosen: 'selezionat',
+    brief_company_body: '<strong style=\"color:var(--white)\">VTI (Virtual Technologies Inc.)</strong> — fondata nel 2001 da Oscar C. Taffi a Beacon, New York. Leader globale nell\'hardware e software per la realtà virtuale.<br><br><em style=\"color:var(--grey)\">Visione: \"Ogni prodotto che progettiamo nasce da innovazione e tecnologia all\'avanguardia.\"</em>',
+    brief_crisis_body: '<strong>Virtu-Fit è il 27% al di sotto delle proiezioni di fatturato.</strong> I concorrenti stanno bene. Sei il Product Manager — devi scoprire cosa non va.',
+    brief_chip_company: '🏢 L\'Azienda',
+    brief_chip_org: '🏗️ Struttura Organizzativa',
+    brief_chip_chars: '👥 Profili Personaggi',
+    brief_chip_crisis: '⚠️ La Crisi',
+    fin_title: '📊 Rapporto Finanziario VTI',
+    fin_revenue: 'Fatturato',
+    fin_cogs: 'Costo del Venduto (COGS)',
+    fin_gross: 'Margine Lordo',
+    fin_sga: 'Spese Generali (SG&A)',
+    fin_operating: 'Reddito Operativo',
+    fin_econ: 'Profitto Economico',
+    round_label: 'Momento',
+    like_label: 'Likability',
+    elevator_title: '🛗 L\'Ascensore — 30 Secondi col CEO',
+    elevator_sub: 'Il CEO ti chiede un aggiornamento. Hai solo 30 secondi.',
+    sp_title: '🤝 Riprova Sociale — Chi è con te?',
+    sp_sub: 'Un membro del Committee vuole sapere chi supporta il progetto.',
+    minigame_skip: 'Salta →',
+    basketball_title: '🏀 Pausa — Sfida al Canestro!',
+    basketball_sub: 'Tutti in ufficio guardano. Premi TIRA! al momento giusto. 3 tiri.',
+    basketball_principle: '💡 Cialdini: Simpatia — Le persone ti seguono di più se ti amano.',
+    basketball_shoot: 'TIRA! 🏀',
+    basketball_score: '+ {n} Canestri → +{p} pts +{l}% Likability!',
+    watercooler_title: '💧 Distributore Acqua — Momento Sociale',
+    watercooler_sub: 'Incontri Leonardo Bianchi al distributore. Prima di chiedergli supporto, questa e la tua chance.',
+    watercooler_principle: '💡 Cialdini: Reciprocità — Dai qualcosa prima di chiedere.',
+    reciprocity_title: '🎂 Torta in Ufficio!',
+    reciprocity_sub: 'Qualcuno ha portato una torta. Sandro Lorini (il tuo antagonista principale) è lì.',
+    reciprocity_principle: '💡 Cialdini: Simpatia + Reciprocità — piccoli gesti costruiscono grandi alleanze.',
+    bonus_earned: '🎉 +{p} punti +{l}% Likability!',
+  },
+    // Avatar initials
+    avatar_ceo: 'OC',
+    avatar_boss: 'NF',
+    avatar_mktd: 'FM',
+    avatar_sales: 'CC',
+    avatar_manuf: 'TU',
+    avatar_antag: 'SL',
+    avatar_ops: 'GE',
+    avatar_acct: 'LB',
+    avatar_chuck: 'CF',
+
+  en: {
+    portal: 'Confluenza', welcome_tagline: 'VTI · Confluenza',
+    welcome_title1: 'Confluenza',
+    welcome_title2: '', welcome_sub: 'Influence as a tool for cross-functional collaboration. You are a Product Manager at VTI. No formal authority — only your influence.',
+    stat_moments: 'Moments', stat_per_round: 'Per scenario', stat_points: 'Max points',
+    btn_start: 'Start the Simulation',
+    reg_title: 'Your Team Name', reg_sub: 'Choose a unique name. <strong>Include a number and a symbol</strong> to make it unmistakable — e.g. <em>Falcon#7, Alpha★3</em>',
+    reg_hint: 'The name will appear in the leaderboard. Use numbers + symbols: #, ★, &, @, _, +',
+    btn_register: 'Register Team',
+    brief_title: 'Your Context', brief_sub: 'Before starting, familiarize yourself with the company, your role, and the key characters.',
+    brief_company: 'The Company', brief_company_text: 'VTI (Virtual Technologies Inc.) is a global leader in virtual reality hardware and software. Founded in 2001 by O.C. Taft, it produces Virtu-Man, Virtu-Wall, Virtu-Fit, and HoloRoom. The Virtu-Fit line has always been the strongest — but today it\'s in crisis.',
+    brief_role: 'Your Role', brief_role_text: 'You are the Virtu-Fit Product Manager in Marketing. Today is your 6th anniversary at VTI. You have no formal authority over other departments. Everything you do, you do through influence.',
+    brief_chars: 'Key Characters',
+    char_you_label: 'You — Product Manager',
+    char_you: 'Product Manager, Marketing Virtu-Fit', char_noel: 'Sr. Marketing Manager — your boss, your ally',
+    char_sam: 'Sr. Engineer, I-Manufacturing — uncooperative', char_tara: 'Director, Industrial Manufacturing — neutral',
+    char_lionel: 'Manager, Accounting — neutral, numbers-focused', char_greg: 'Director, Operations — against the project',
+    char_katie: 'Director, Sales — in favour', char_chuck: 'Team Member — your I-Manufacturing contact',
+    brief_crisis: 'The Crisis', brief_crisis_text: 'Virtu-Fit is 27% below revenue projections. Competitors are doing fine. You must find out what\'s wrong, build a cross-functional team, investigate, and present a solution — without any formal authority over anyone.',
+    btn_start_game: '▶ Start the Day — 08:00',
+    read_phase: '📖 Reading Phase', answer_phase: '✏️ Answer Now', overtime_phase: '⚠️ Time Expired (-5 points)',
+    read_instruction: 'Read the moment carefully. Choices unlock in',
+    read_unlocks: 'seconds.',
+    btn_skip_read: 'Go to Choices →',
+    choices_label_rank: 'Click to rank in order of importance',
+    choices_label_multi: 'Select the correct options',
+    choices_label_single: 'Select the correct answer',
+    rank_hint: 'Click a choice to assign it 1st, 2nd, 3rd... place. Click again to remove.',
+    btn_submit: 'Confirm Answer',
+    btn_reset: 'Reset Selection',
+    overtime_msg: 'Time has expired. 5 points have been deducted. You can still answer.',
+    feed_label: 'Corridor Feed', gossip_sub: '— Waiting for the next moment —',
+    gossip_new: 'New messages and news', btn_next_round: 'Next Moment →',
+    report_score_of: 'points out of', report_details: 'Round by Round Breakdown',
+    report_your_answer: 'Your Answer', report_correct: 'Correct Answer',
+    report_why: 'Why', report_footer_text: 'Use this report during the debrief with your trainer.',
+    complete_title: 'Simulation Complete', complete_text: 'You have completed all 13 moments. Your report is ready.',
+    btn_see_report: 'View My Report',
+    checking: 'Checking...', name_ok: '✓ Name available', name_taken: '✗ Name already taken — choose another',
+    name_short: 'Name must be at least 3 characters',
+    strengths_title: '✓ You did well in', weaknesses_title: '↗ Room to improve in',
+    correct_label: 'Correct', partial_label: 'Partial', wrong_label: 'Wrong',
+    rank_instruction: 'Click options in the order you think is correct (1st, 2nd, 3rd...)',
+    select_instruction: 'Select exactly',
+    select_of: 'of',
+    select_chosen: 'selected',
+    brief_company_body: '<strong style=\"color:var(--white)\">VTI (Virtual Technologies Inc.)</strong> — founded in 2001 by Oscar C. Taft in Beacon, New York. Global leader in virtual reality hardware and software.<br><br><em style=\"color:var(--grey)\">Vision: \"Every product we design stems from innovation and cutting-edge technology.\"</em>',
+    brief_crisis_body: '<strong>Virtu-Fit is 27% below revenue projections.</strong> Competitors are doing fine. You are the Product Manager — find out what is wrong, using only influence.',
+    char_you_label: 'You — Product Manager',
+    brief_company_body: '<strong style=\"color:var(--white)\">VTI (Virtual Technologies Inc.)</strong> — founded in 2001 by Oscar C. Taft in Beacon, New York. Global leader in virtual reality hardware and software.<br><br><em style=\"color:var(--grey)\">Vision: \"Every product we design stems from innovation and cutting-edge technology.\"</em>',
+    brief_crisis_body: '<strong>Virtu-Fit is 27% below revenue projections.</strong> Competitors are doing fine. You are the Product Manager — discover what is wrong.',
+    brief_chip_company: '🏢 The Company',
+    brief_chip_org: '🏗️ Org Chart',
+    brief_chip_chars: '👥 Character Profiles',
+    brief_chip_crisis: '⚠️ The Crisis',
+    fin_title: '📊 VTI Financial Report',
+    fin_revenue: 'Revenue',
+    fin_cogs: 'Cost of Goods (COGS)',
+    fin_gross: 'Gross Margin',
+    fin_sga: 'SG&A Expenses',
+    fin_operating: 'Operating Income',
+    fin_econ: 'Economic Profit',
+    round_label: 'Moment',
+    like_label: 'Likability',
+    elevator_title: '🛗 Elevator Pitch — 30 Seconds with the CEO',
+    elevator_sub: 'The CEO wants an update. You have only 30 seconds.',
+    sp_title: '🤝 Social Proof — Who is with you?',
+    sp_sub: 'A Committee member wants to know who supports the project.',
+    minigame_skip: 'Skip →',
+    basketball_title: '🏀 Break — Basketball Challenge!',
+    basketball_sub: 'The whole office is watching. Press SHOOT! at the right moment. 3 shots.',
+    basketball_principle: '💡 Cialdini: Liking — People follow you more when they like you.',
+    basketball_shoot: 'SHOOT! 🏀',
+    basketball_score: '+{n} Baskets → +{p} pts +{l}% Likability!',
+    watercooler_title: '💧 Water Cooler — Social Moment',
+    watercooler_sub: 'You bump into Lionel Wirth (Accounting) at the water cooler. Before you need his support, this is your chance.',
+    watercooler_principle: '💡 Cialdini: Reciprocity — Give something before you ask.',
+    reciprocity_title: '🎂 Office Birthday Cake!',
+    reciprocity_sub: 'Someone brought cake. Sam Loricke (your main antagonist) is right there.',
+    reciprocity_principle: '💡 Cialdini: Liking + Reciprocity — small gestures build big alliances.',
+    bonus_earned: '🎉 +{p} pts +{l}% Likability!',
+    // Avatar initials
+    avatar_ceo: 'OC',
+    avatar_boss: 'NH',
+    avatar_mktd: 'FM',
+    avatar_sales: 'KK',
+    avatar_manuf: 'TU',
+    avatar_antag: 'SL',
+    avatar_ops: 'GH',
+    avatar_acct: 'LW',
+    avatar_chuck: 'CF',
+
+  }
+}
+
+
+
+// ─── NAME LOCALISATION ────────────────────────────────────────────
+const IT_TO_EN_NAMES = {
+  'Oscar C. Taffi': 'Oscar C. Taft', 'O.C. Taffi': 'O.C. Taft',
+  'Noele Ferrari': 'Noel Huffman', 'Francesco Mellini': 'Freeman Miller',
+  'Sandro Lorini': 'Sam Loricke', 'Teresa Uttini': 'Tara Uttridge',
+  'Leonardo Bianchi': 'Lionel Wirth', 'Gregorio Ertz': 'Greg Hertzhaft',
+  'Caterina Cissel': 'Katherine Kissel', 'Carlo Fuentes': 'Chuck Fuertes',
+  'Melania': 'Melanie', 'Luca': 'Lucas'
+};
+const EN_TO_IT_NAMES = {
+  'Oscar C. Taft': 'Oscar C. Taffi', 'O.C. Taft': 'O.C. Taffi',
+  'Noel Huffman': 'Noele Ferrari', 'Freeman Miller': 'Francesco Mellini',
+  'Sam Loricke': 'Sandro Lorini', 'Tara Uttridge': 'Teresa Uttini',
+  'Lionel Wirth': 'Leonardo Bianchi', 'Greg Hertzhaft': 'Gregorio Ertz',
+  'Katherine Kissel': 'Caterina Cissel', 'Chuck Fuertes': 'Carlo Fuentes',
+  'Melanie': 'Melania', 'Lucas': 'Luca'
+};
+function localizeText(text) {
+  if (!text) return text;
+  if (state.lang === 'it') {
+    Object.entries(EN_TO_IT_NAMES).forEach(([en, it]) => { text = text.split(en).join(it); });
+  }
+  return text;
+}
+
+// ─── LIKABILITY ───────────────────────────────────────────────────
+function updateLikability(delta) {
+  state.likability = Math.max(0, Math.min(100, state.likability + (delta || 0)));
+  const el = document.getElementById('like-val');
+  if (el) el.textContent = state.likability;
+}
+
+// ─── MINI-GAME SCHEDULE ───────────────────────────────────────────
+// packIndex = round just completed; mini-game shows before next round
+const MINIGAME_SCHEDULE = { 2: 'watercooler', 5: 'elevator', 9: 'reciprocity', 11: 'socialproof' };
+
+// ─── MINI-GAME DATA ───────────────────────────────────────────────
+const COOLER_DATA = {
+  it: {
+    avatar: 'LB', avatarCol: 'var(--amber)', charName: 'Leonardo Bianchi',
+    bubble: 'Ciao! Stai lavorando sul progetto Virtu-Fit? Come sta andando?',
+    options: [
+      { text: 'Condividi un dato interessante che hai trovato. Qualcosa che potrebbe interessargli.', pts: 8, lkb: 15, result: 'Leonardo si anima. "Quei numeri mi dicono qualcosa." Hai aperto una porta con la Reciprocita.' },
+      { text: '"Bene, grazie." Ti allontani rapidamente verso il tuo ufficio.', pts: 0, lkb: -5, result: 'Opportunita mancata. La Reciprocita richiede dare prima di ricevere.' },
+      { text: '"Ho bisogno del tuo supporto al Committee. Ci puoi contare?"', pts: 2, lkb: 0, result: 'Troppo diretto troppo presto. Leonardo sorride e cambia argomento.' },
+    ]
+  },
+  en: {
+    avatar: 'LW', avatarCol: 'var(--amber)', charName: 'Lionel Wirth',
+    bubble: 'Hi. Working on that Virtu-Fit investigation? How is it going?',
+    options: [
+      { text: 'Share an interesting data point from your analysis — something that might interest him.', pts: 8, lkb: 15, result: 'Lionel perks up. Those numbers tell him something. You opened a door with Reciprocity.' },
+      { text: '"Fine, thanks." You head quickly back to your office.', pts: 0, lkb: -5, result: 'Missed opportunity. Reciprocity requires giving before receiving.' },
+      { text: '"I need your support at the Committee. Can I count on you?"', pts: 2, lkb: 0, result: 'Too direct too soon. Lionel smiles politely and changes subject.' },
+    ]
+  }
+};
+
+const CAKE_DATA = {
+  it: {
+    avatar: 'SL', avatarCol: 'var(--red)', charName: 'Sandro Lorini',
+    bubble: '"La torta. Non mi aspettavo di vederti qui." (Ti fissa brevemente)',
+    options: [
+      { text: 'Gli tagli una fetta generosa e gliela porti. "Eccola."', pts: 8, lkb: 15, result: 'Sandro e sorpreso. Prende la fetta in silenzio. Il giorno dopo risponde a una tua email. Reciprocita in azione.' },
+      { text: 'Lo ignori e vai alla tua scrivania.', pts: 0, lkb: -5, result: 'Sandro lo nota. Il divario rimane. A volte un gesto vale piu di cento argomenti.' },
+      { text: '"Ho visto che hai problemi con il progetto — possiamo parlarne?"', pts: 1, lkb: -10, result: 'Pessimo timing. Non si affronta un antagonista vicino alla torta.' },
+    ]
+  },
+  en: {
+    avatar: 'SL', avatarCol: 'var(--red)', charName: 'Sam Loricke',
+    bubble: '"Oh, cake. Did not expect to see you here." (Glances at you briefly)',
+    options: [
+      { text: 'Cut him a generous slice and bring it over. "Here you go."', pts: 8, lkb: 15, result: 'Sam is surprised. Takes the slice quietly. Next day he replies to your email. Reciprocity in action.' },
+      { text: 'Ignore him and head back to your desk.', pts: 0, lkb: -5, result: 'Sam notices. The gap stays. Sometimes a simple gesture beats a hundred logical arguments.' },
+      { text: '"I heard you have issues with our project — can we talk?"', pts: 1, lkb: -10, result: 'Bad timing. Do not confront an antagonist near birthday cake.' },
+    ]
+  }
+};
+
+const ELEVATOR_DATA = {
+  it: {
+    avatar: 'OC', avatarCol: 'var(--gold)', charName: 'Oscar C. Taffi',
+    bubble: '"Stai lavorando su Virtu-Fit, giusto? Ho 30 secondi. Cosa devo sapere?"',
+    options: [
+      { text: 'Citi subito il dato chiave: "Siamo al -27%. Ho identificato 3 cause radice e ho un piano concreto per recuperare entro Q4."', pts: 8, lkb: 15, result: 'Il CEO annuisce. "Bene. Manda un sommario stasera." Bottom line first: funziona sempre.' },
+      { text: 'Condividi una scoperta sorprendente dalla tua indagine — qualcosa che potrebbe cambiare il modo in cui VTI pensa al problema.', pts: 2, lkb: 0, result: 'Il CEO scende al piano successivo. Troppi dettagli, nessun impatto. Arriva al punto.' },
+      { text: '"Stiamo lavorando sodo, ci vorra ancora un po."', pts: 0, lkb: -5, result: 'Il CEO sembra insoddisfatto. Con 30 secondi a disposizione, devi sempre avere una risposta pronta.' },
+    ]
+  },
+  en: {
+    avatar: 'OC', avatarCol: 'var(--gold)', charName: 'Oscar C. Taft',
+    bubble: '"You are running the Virtu-Fit investigation, right? 30 seconds. What do I need to know?"',
+    options: [
+      { text: 'Lead with the key fact: "We are at -27%. I have identified 3 root causes and have a plan to recover by Q4."', pts: 8, lkb: 15, result: 'The CEO nods. "Good. Send a summary tonight." Bottom line first: it always works.' },
+      { text: 'Share one surprising finding from your investigation that could change how VTI thinks about the problem.', pts: 2, lkb: 0, result: 'The CEO steps off at the next floor. Too much detail, no impact. Get to the point.' },
+      { text: '"We are working hard on it, it will take more time."', pts: 0, lkb: -5, result: 'The CEO looks unsatisfied. With 30 seconds available, always have a ready answer.' },
+    ]
+  }
+};
+
+const SOCIALPROOF_DATA = {
+  it: {
+    avatar: '?', avatarCol: 'var(--grey)', charName: 'Membro del Committee',
+    bubble: '"Chi altro sta appoggiando il progetto? Voglio saperlo prima di decidere."',
+    options: [
+      { text: '"Caterina Cissel e Francesco Mellini sono con noi. E i dati parlano da soli."', pts: 8, lkb: 15, result: 'Perfetto. Nomi credibili piu dati reali. Le persone si muovono quando vedono che altri si sono gia mossi.' },
+      { text: 'In giro c\'e molto supporto, non preoccuparti.', pts: 2, lkb: 0, result: 'Non convince. La Riprova Sociale richiede specificita — nomi reali, non vaghezze.' },
+      { text: '"Il progetto sta andando bene, non preoccuparti di chi supporta cosa."', pts: 0, lkb: -5, result: 'Aumenta il dubbio. Chi chiede chi e a bordo ha bisogno di una risposta diretta.' },
+    ]
+  },
+  en: {
+    avatar: '?', avatarCol: 'var(--grey)', charName: 'Committee Member',
+    bubble: '"Who else is backing the project? I want to know before I decide."',
+    options: [
+      { text: '"Katherine Kissel and Freeman Miller are with us. And the data speaks for itself."', pts: 8, lkb: 15, result: 'Exactly right. Named allies plus real data. People move when they see others have already moved.' },
+      { text: '"There is a lot of support around, do not worry."', pts: 2, lkb: 0, result: 'Not convincing. Social Proof requires specifics — real names and roles, not vague reassurances.' },
+      { text: '"The project is going well, do not worry about who supports what."', pts: 0, lkb: -5, result: 'This increases doubt. When someone asks who is on board, give a direct answer.' },
+    ]
+  }
+};
+
+// ─── MINI-GAME ENGINE (clean, bulletproof) ────────────────────────
+
+// Global guard: prevents afterMinigame from firing twice
+let _mgInProgress = false;
+
+function skipMinigame(type) {
+  // Skip = just continue, no points, no likability change
+  doAfterMinigame(0, 0);
+}
+
+function afterMinigame(type, pts, lkb) {
+  doAfterMinigame(pts, lkb);
+}
+
+function doAfterMinigame(pts, lkb) {
+  if (_mgInProgress) return;
+  _mgInProgress = true;
+  if (pts > 0) {
+    state.bonusPoints = (state.bonusPoints || 0) + pts;
+    state.totalScore += pts;
+    updateLikability(lkb);
+  }
+  // Show gossip for current round, bypassing minigame intercept
+  showGossipTransition(state.currentRound, false, true);
+}
+
+function renderMinigame(screenId, data, mgType) {
+  _mgInProgress = false; // reset for fresh game
+  const scr = document.getElementById(screenId);
+  if (!scr) return;
+
+  const lang = state.lang;
+  const d = data[lang];
+
+  // Update avatar and name
+  const avatar = scr.querySelector('.mg-avatar');
+  const nameEl = scr.querySelector('.mg-char-name');
+  const bubbleEl = scr.querySelector('.mg-bubble');
+  const optsEl = scr.querySelector('.mg-options');
+  const rewardEl = scr.querySelector('.mg-reward');
+  const continueEl = scr.querySelector('.mg-continue');
+
+  if (avatar) { avatar.textContent = d.avatar; avatar.style.background = d.avatarCol; }
+  if (nameEl) nameEl.textContent = localizeText(d.charName);
+  if (bubbleEl) bubbleEl.textContent = d.bubble;
+  if (rewardEl) { rewardEl.style.display = 'none'; rewardEl.textContent = ''; }
+  if (continueEl) continueEl.style.display = 'none';
+
+  // Render options
+  if (optsEl) {
+    optsEl.innerHTML = '';
+    d.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'cooler-option';
+      btn.textContent = opt.text;
+      btn.onclick = () => handleMgChoice(scr, optsEl, rewardEl, continueEl, opt, mgType);
+      optsEl.appendChild(btn);
+    });
+  }
+
+  showScreen(screenId.replace('screen-', ''));
+}
+
+function handleMgChoice(scr, optsEl, rewardEl, continueEl, opt, mgType) {
+  // Prevent any further interaction — lock everything immediately
+  if (scr.getAttribute('data-mg-done')) return;
+  scr.setAttribute('data-mg-done', '1');
+
+  // Disable all option buttons instantly
+  optsEl.querySelectorAll('.cooler-option').forEach(b => {
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+    b.style.opacity = '0.5';
+  });
+
+  // Show result
+  if (rewardEl) {
+    rewardEl.style.display = 'block';
+    rewardEl.style.color = opt.pts > 0 ? 'var(--green)' : 'var(--amber)';
+    rewardEl.textContent = opt.result + (opt.pts > 0 ? ' (+' + opt.pts + ' pts)' : '');
+  }
+
+  // Show continue button
+  if (continueEl) {
+    continueEl.style.display = 'inline-flex';
+    continueEl.textContent = state.lang === 'it' ? 'Continua →' : 'Continue →';
+    // Store values on the button itself for safe retrieval
+    continueEl.setAttribute('data-pts', opt.pts);
+    continueEl.setAttribute('data-lkb', opt.lkb);
+    continueEl.onclick = () => {
+      if (_mgInProgress) return;
+      const pts = parseInt(continueEl.getAttribute('data-pts')) || 0;
+      const lkb = parseInt(continueEl.getAttribute('data-lkb')) || 0;
+      doAfterMinigame(pts, lkb);
+    };
+  }
+
+  // Clear data-mg-done when leaving screen (so it resets for next time)
+  // This is done in showScreen transitions automatically since we reset in renderMinigame
+}
+
+function startWaterCooler(afterRound) {
+  document.getElementById('screen-watercooler')?.removeAttribute('data-mg-done');
+  renderMinigame('screen-watercooler', COOLER_DATA, 'watercooler');
+}
+
+function startReciprocity(afterRound) {
+  document.getElementById('screen-reciprocity')?.removeAttribute('data-mg-done');
+  renderMinigame('screen-reciprocity', CAKE_DATA, 'reciprocity');
+}
+
+function startElevator(afterRound) {
+  document.getElementById('screen-elevator')?.removeAttribute('data-mg-done');
+  renderMinigame('screen-elevator', ELEVATOR_DATA, 'elevator');
+}
+
+function startSocialProof(afterRound) {
+  document.getElementById('screen-socialproof')?.removeAttribute('data-mg-done');
+  renderMinigame('screen-socialproof', SOCIALPROOF_DATA, 'socialproof');
+}
+
+// ═══════════════════════════════════════════════════════════
+// GAME DATA — 13 MOMENTS
+// ═══════════════════════════════════════════════════════════
+const MOMENTS = [
+  {
+    id: 1,
+    type: 'rank',
+    title: { it: 'Richiedere un Team di Indagine', en: 'Requesting an Investigative Team' },
+    time: '08:15',
+    scenario: {
+      it: 'È il tuo 6° anniversario in VTI. Appena arrivi in ufficio, squilla il telefono. È Noele Ferrari, il tuo capo.\n\n"Noele qui. Brutte notizie. I dati ci dicono che la linea Virtu-Fit è il 27% al di sotto delle proiezioni di fatturato. Le previsioni erano ottime e i concorrenti stanno andando bene. Qualcosa non va e ho bisogno che tu scopra cosa."\n\nDopo tre giorni di ricerche preliminari e interviste, la tua conclusione è chiara: il problema è più complesso di quanto sembri. Arrivare alla radice richiederà un team interfunzionale — un progetto significativo che Noele potrebbe non voler approvare subito.\n\nCome costruisci la tua proposta?\n\n🎯 Classifica le seguenti affermazioni in ordine di importanza per il tuo pitch a Noele:',
+      en: 'It\'s your 6th anniversary at VTI. As you arrive at the office, your phone rings. It\'s Noel Huffman, your boss.\n\n"Noel here. Bad news. The facts tell us the Virtu-Fit product line is 27% below revenue projections. Forecasts were strong and our competitors are doing fine. Something is wrong and I need you to find out what."\n\nAfter three days of preliminary research and interviews, your conclusion is clear: the problem runs deeper than it appears. Getting to the root of it will require a cross-functional team — a significant undertaking that Noel may not want to approve right away.\n\nHow do you build your case?\n\n🎯 Rank the following statements in order of importance for your pitch to Noel:'
+    },
+    choices: [
+      { id: 'A', it: 'Ho già trascorso 3 giorni a raccogliere dati e condurre interviste. Ho una visione chiara dell\'ambito e delle risorse necessarie per indagare correttamente.', en: 'I\'ve already spent 3 days gathering data and conducting interviews. I have a clear sense of scope and the resources we\'ll need to investigate properly.' },
+      { id: 'B', it: 'Virtu-Fit è il 27% al di sotto delle proiezioni di fatturato — questo minaccia direttamente gli obiettivi finanziari Q3 di VTI e non può essere ignorato.', en: 'Virtu-Fit is 27% below revenue projections — this directly threatens VTI\'s Q3 financial targets and cannot be left unaddressed.' },
+      { id: 'C', it: 'Un team interfunzionale può indagare le cause profonde e fornire una roadmap di soluzione concreta entro 6 settimane, con minima interruzione alle operazioni in corso.', en: 'A cross-functional team can investigate root causes and deliver a concrete solution roadmap within 6 weeks, with minimal disruption to ongoing operations.' },
+      { id: 'D', it: 'Se non affrontiamo questo ora, rischiamo di perdere terreno competitivo in modo permanente. Virtu-Fit è sempre stata la nostra linea più forte — e i concorrenti stanno guardando.', en: 'If we don\'t address this now, we risk losing competitive ground permanently. Virtu-Fit has always been our strongest product line — and competitors are watching.' }
+    ],
+    correct: ['B', 'D', 'C', 'A'],
+    scoring: 'rank',
+    explanation: {
+      it: 'Inizia sempre con il bottom line — il dato finanziario concreto (B) cattura immediatamente l\'attenzione. Fai riferimento sia agli obiettivi a breve che a lungo termine (D). Poi dichiara COSA proponi prima di spiegare COME (C prima di A). Le prove e i dettagli vengono per ultimi. Questa struttura costruisce momentum logico e massimizza la persuasione.',
+      en: 'Always lead with the bottom line — the hard financial fact (B) immediately establishes stakes. Reference both short-term and long-term objectives (D). Then state WHAT you propose before explaining HOW (C before A). Evidence and detail come last. This structure builds logical momentum and maximises persuasion.'
+    }
+  },
+  {
+    id: 2,
+    type: 'multi',
+    count: 3,
+    title: { it: 'Costruire la Credibilità', en: 'Building Credibility' },
+    time: '09:00',
+    scenario: {
+      it: 'Noele ha approvato la tua richiesta. Puoi mettere insieme un team interfunzionale per investigare il problema Virtu-Fit. Ti chiede aggiornamenti settimanali.\n\nStai per intraprendere un\'iniziativa importante che richiederà la partecipazione e l\'approvazione di molte persone in azienda — persone che non hai l\'autorità di comandare.\n\nLa credibilità sarà la tua valuta principale.\n\n🎯 Quali 3 azioni ti aiuterebbero di più a costruire la tua credibilità per questo progetto?',
+      en: 'Noel has approved your request. You can put together a cross-functional team to investigate the Virtu-Fit problem. He wants weekly updates.\n\nYou are about to undertake a major initiative that will require the participation and approval of many people across the company — people you have no authority to command.\n\nCredibility will be your main currency.\n\n🎯 Which 3 actions would most help you build your credibility for this project?'
+    },
+    choices: [
+      { id: 'A', it: 'Concentrati sul fare bene il tuo lavoro quotidiano. La performance è la base della credibilità.', en: 'Focus on doing your day-to-day job well. Performance is the foundation of credibility.' },
+      { id: 'B', it: 'Investi tempo in modo proattivo nelle relazioni con gli stakeholder chiave — prima di averne bisogno.', en: 'Proactively invest time in relationships with key stakeholders — before you need them.' },
+      { id: 'C', it: 'Annuncia pubblicamente i tuoi obiettivi ambiziosi per creare aspettative alte.', en: 'Publicly announce your ambitious goals to set high expectations.' },
+      { id: 'D', it: 'Trova uno sponsor senior che creda nel progetto e possa supportarti apertamente.', en: 'Find a senior sponsor who believes in the project and can openly support you.' },
+      { id: 'E', it: 'Mantieni il tuo "conto corrente emotivo" attivo — sii generoso con informazioni, aiuto e favori verso gli altri.', en: 'Keep your "personal emotional account" healthy — be generous with information, help, and favours.' },
+      { id: 'F', it: 'Concentrati prima sul supporto del tuo reparto, poi espanditi agli altri.', en: 'Focus first on securing your own department\'s support, then expand outward.' }
+    ],
+    correct: ['A', 'B', 'D'],
+    scoring: 'multi',
+    explanation: {
+      it: 'La credibilità inizia dalla performance personale (A) — non puoi influenzare gli altri se non sei affidabile tu stesso. Le relazioni proattive (B) creano fiducia prima del bisogno. Lo sponsor senior (D) amplifica la tua credibilità per associazione. Il "conto emotivo" (E) è anch\'esso valido, ma le prime tre sono fondamentali. Evita annunci pubblici prematuri (C) e approcci esclusivamente interni (F).',
+      en: 'Credibility starts with your own performance (A) — you cannot influence others if you are not reliable yourself. Proactive relationships (B) build trust before you need it. A senior sponsor (D) amplifies your credibility by association. The emotional account (E) is also valid, but the first three are foundational. Avoid premature public announcements (C) and exclusively internal approaches (F).'
+    }
+  },
+  {
+    id: 3,
+    type: 'single',
+    title: { it: 'Selezione del Membro Accounting', en: 'Selecting Your Accounting Team Member' },
+    time: '09:45',
+    scenario: {
+      it: 'Per completare il team, hai bisogno di un rappresentante dell\'Accounting. Un amico del personale ti ha lasciato alcune informazioni sui candidati disponibili.\n\n📋 Profili candidati:\n\n• <strong>A — Helen (Associate)</strong>: Ottime competenze tecniche, molto accurata. Lavora bene da sola ma tende a evitare le dinamiche di gruppo.\n\n• <strong>B — Bill (Senior Associate)</strong>: Forte background analitico, molto esperto. È noto per essere difficile nelle situazioni di team e tende a monopolizzare le conversazioni.\n\n• <strong>C — Zinah (Associate)</strong>: Proattiva e flessibile. Ha già lavorato in un progetto cross-funzionale. Ha frequentato gli stessi eventi alumni di Leonardo Bianchi e sembra conoscere già alcune persone nel progetto.\n\n• <strong>D — Monica (Manager)</strong>: Molto esperta, ha una visione strategica eccellente. È già sovraccarica di altri progetti urgenti.\n\n🎯 Chi scegli?',
+      en: 'To complete the team, you need a representative from Accounting. A friend in personnel has left you some information on the available candidates.\n\n📋 Candidate profiles:\n\n• <strong>A — Helen (Associate)</strong>: Excellent technical skills, very accurate. Works well alone but tends to avoid group dynamics.\n\n• <strong>B — Bill (Senior Associate)</strong>: Strong analytical background, very experienced. Known to be difficult in team situations and tends to monopolize conversations.\n\n• <strong>C — Zinah (Associate)</strong>: Proactive and flexible. Has already worked on a cross-functional project. Attended the same alumni events as Lionel Wirth and appears to already know several people connected to the project.\n\n• <strong>D — Monica (Manager)</strong>: Highly experienced with excellent strategic vision. Already overloaded with other urgent projects.\n\n🎯 Who do you choose?'
+    },
+    choices: [
+      { id: 'A', it: 'Helen — Associate, ottime competenze tecniche', en: 'Helen — Associate, excellent technical skills' },
+      { id: 'B', it: 'Bill — Senior Associate, forte background analitico', en: 'Bill — Senior Associate, strong analytical background' },
+      { id: 'C', it: 'Zinah — Associate, esperienza cross-funzionale, rete di relazioni', en: 'Zinah — Associate, cross-functional experience, relationship network' },
+      { id: 'D', it: 'Monica — Manager, visione strategica, già sovraccarica', en: 'Monica — Manager, strategic vision, already overloaded' }
+    ],
+    correct: ['C'],
+    scoring: 'single',
+    explanation: {
+      it: 'Zinah è la scelta giusta per ragioni che vanno oltre le competenze tecniche. In un progetto che richiede influenza cross-funzionale, la sua rete di relazioni — inclusa la connessione con Leonardo dell\'Accounting, uno stakeholder neutrale chiave — vale quanto la sua esperienza. La simpatia e la fiducia preesistente possono influenzare le persone tanto quanto la logica. Monica è troppo occupata, Bill è difficile in team, Helen evita le dinamiche di gruppo.',
+      en: 'Zinah is the right choice for reasons beyond technical skills. In a project that requires cross-functional influence, her relationship network — including the connection with Lionel from Accounting, a key neutral stakeholder — is as valuable as her experience. Pre-existing sympathy and trust can influence people as much as logic. Monica is too busy, Bill is difficult in teams, Helen avoids group dynamics.'
+    }
+  },
+  {
+    id: 4,
+    type: 'single',
+    title: { it: 'Chiedere Cooperazione al Manufacturing', en: 'Asking Manufacturing to Cooperate' },
+    time: '10:30',
+    scenario: {
+      it: 'Partecipi a una riunione con il team di I-Manufacturing che sta valutando consulenti per riprogettare il processo di produzione Virtu-Fit. Ti stai presentando e stai spiegando la missione del tuo team da circa cinque minuti, quando un ingegnere ti interrompe:\n\n"Non capisco. Perché dovremmo sospendere i nostri piani di reengineering per lasciare andare avanti il vostro piccolo progetto?"\n\nLa stanza è in silenzio. Tutti ti guardano.\n\n🎯 Per essere più persuasivo, come rispondi?\n\nNota: la tua analisi delle cause radice potrebbe identificare il collo di bottiglia nel piano di reingegnerizzazione Gen-4 del Manufacturing.',
+      en: 'You are attending a meeting with the I-Manufacturing team that is evaluating consultants to reengineer the Virtu-Fit production process. You\'ve been introducing yourself and explaining your team\'s mission for about five minutes when an engineer interrupts:\n\n"I don\'t get it. Why should we put our reengineering plans on hold so your little project can keep going?"\n\nThe room goes quiet. Everyone is looking at you.\n\n🎯 To be most persuasive, how do you respond?\n\n💡 Your root-cause analysis could help identify the bottleneck in their Gen-4 reengineering plan.'
+    },
+    choices: [
+      { id: 'A', it: 'Dimostri la tua expertise tecnica citando dati di produzione e ricerche di settore per stabilire credibilità.', en: 'You demonstrate your technical expertise by citing production data and industry research to establish credibility.' },
+      { id: 'B', it: 'Spieghi che il CEO ha approvato questa indagine e che Manufacturing deve cooperare.', en: 'You explain that the CEO has approved this investigation and that Manufacturing needs to cooperate.' },
+      { id: 'C', it: 'Proponi un compromesso: limiterete le vostre richieste al minimo indispensabile.', en: 'Propose a joint investigation where Manufacturing co-owns the findings and shares the credit.' },
+      { id: 'D', it: 'Riconosci le loro preoccupazioni e prometti di essere brevi nelle riunioni.', en: 'You acknowledge their concerns and promise to keep meetings brief.' },
+      { id: 'E', it: 'Mostri esattamente come i vostri risultati potrebbero rendere il loro piano di reengineering più efficace — risparmiando loro tempo e risorse.', en: 'You show them exactly how your findings could make their reengineering plan more effective — saving them time and resources.' }
+    ],
+    correct: ['E'],
+    scoring: 'single',
+    explanation: {
+      it: 'In ogni negoziazione, la domanda chiave è: "Cosa ci guadagna l\'altro?" (WIIFM). La risposta E mostra concretamente come le tue scoperte possono aiutare il Manufacturing a raggiungere i propri obiettivi. Le altre opzioni sono unilaterali — citare dati, invocare il CEO, minimizzare le richieste. La risposta E è l\'unica che crea valore per entrambi. La tua analisi potrebbe anche identificare il collo di bottiglia nel piano Gen-4 del Manufacturing — usalo come leva.',
+      en: 'In any negotiation, the key question is: "What\'s in it for them?" (WIIFM). Option E concretely shows how your findings can help Manufacturing achieve their own goals. The other options are one-sided — citing data, invoking the CEO, minimising requests. Option E is the only one that creates value for both sides. Your analysis could also identify the bottleneck in their Gen-4 reengineering plan — use this as leverage.'
+    }
+  },
+  {
+    id: 5,
+    type: 'single',
+    title: { it: 'Ottenere la Cooperazione di Sandro', en: 'Getting Cooperation from Sam' },
+    time: '11:15',
+    scenario: {
+      it: 'Per rispettare le scadenze, il tuo team ha bisogno di dati da I-Manufacturing in modo tempestivo. Carlo Fuentes, un membro del tuo team, ti informa che Sandro Lorini di I-Manufacturing è particolarmente non collaborativo. Carlo sta mancando le scadenze a causa sua.\n\nHai già incontrato Sandro brevemente. L\'impressione è stata difficile — c\'è una chiara antipatia personale. Sandro è nell\'azienda da moltissimi anni, è rispettato dal senior management ed è sponsorizzato dal VP del Manufacturing.\n\n🎯 Come ottenere la cooperazione di Sandro?',
+      en: 'To stay on schedule, your team needs data from I-Manufacturing in a timely manner. Chuck Fuertes, a team member, informs you that Sam Loricke from I-Manufacturing is being particularly uncooperative. Chuck is missing deadlines because of him.\n\nYou have already briefly met Sam. The impression was difficult — there is a clear personal antipathy. Sam has been with the company for many years, is respected by senior management, and is sponsored by the VP of Manufacturing.\n\n🎯 How do you get Sam\'s cooperation?'
+    },
+    choices: [
+      { id: 'A', it: 'Prepara un argomentazione chiara e diretta a Sandro sull\'importanza del progetto per VTI.', en: 'Prepare a clear, direct argument to Sam about the project\'s importance for VTI.' },
+      { id: 'B', it: 'Offri a Sandro una risorsa: un membro aggiuntivo del team che possa alleviare il suo carico di lavoro.', en: 'Offer Sam a resource: an additional team member to help lighten his workload.' },
+      { id: 'C', it: 'Scala la situazione al tuo capo Noele e chiedigli di parlare con il manager di Sandro.', en: 'Escalate the situation to your boss Noel and ask him to speak to Sam\'s manager.' },
+      { id: 'D', it: 'Chiedi a un contatto aziendale comune un consiglio su come ingaggiare Sandro in modo più efficace.', en: 'Ask a common corporate contact for advice on how to engage Sam more effectively.' }
+    ],
+    correct: ['D'],
+    scoring: 'single',
+    explanation: {
+      it: 'In situazioni di antipatia personale, l\'approccio diretto spesso aggrava il problema. Quando c\'è mancanza di simpatia o fiducia, l\'approccio indiretto — far parlare qualcuno di cui Sandro si fida — è più efficace. Questo è il "bridge technique": usare un intermediario credibile per raggiungere chi non vuole ascoltarti direttamente. Non è debolezza, è strategia. L\'escalation (C) brucia le relazioni; le risorse (B) non affrontano l\'antipatia di fondo.',
+      en: 'In situations of personal antipathy, the direct approach often makes things worse. When sympathy and trust are absent, the indirect approach — having someone Sam trusts speak on your behalf — is more effective. This is the "bridge technique": using a credible intermediary to reach someone who won\'t listen to you directly. It\'s not weakness — it\'s strategy. Escalation (C) burns relationships; resources (B) don\'t address the underlying antipathy.'
+    }
+  },
+  {
+    id: 6,
+    type: 'multi',
+    count: 2,
+    title: { it: 'Focalizzare gli Sforzi di Influenza', en: 'Focusing Your Influence Efforts' },
+    time: '12:00',
+    scenario: {
+      it: 'Tra 10 giorni presenterai i risultati all\'Efficiency Committee. Vuoi incontrare ciascun membro nei prossimi giorni. Ecco le tue impressioni:\n\n• <strong>Caterina Cissel</strong> (Dir. Sales) — Ti ha ascoltato con grande interesse. Sembra molto coinvolta.\n• <strong>Francesco Mellini</strong> (Dir. Marketing) — Il tuo direttore. Ti ha sostenuto dall\'inizio.\n• <strong>Teresa Uttini</strong> (Dir. Manufacturing) — Cordiale ma non si è esposta.\n• <strong>Leonardo Bianchi</strong> (Mgr. Accounting) — Poche parole. Ha chiesto solo numeri.\n• <strong>Gregorio Ertz</strong> (Dir. Operations) — Ha detto che il progetto \"non è una priorità\" per il suo reparto.\n\n🎯 A quali 2 dedichi attenzione prioritaria?',
+      en: 'In 10 days you will present findings to the Efficiency Committee. You want to meet each member beforehand. Here are your impressions:\n\n• <strong>Katherine Kissel</strong> (Dir. Sales) — Listened attentively and asked many questions about the data.\n• <strong>Freeman Miller</strong> (Dir. Marketing) — Your own Director. Has supported you from day one.\n• <strong>Tara Uttridge</strong> (Dir. Manufacturing) — Professionally cordial. Has not shown her cards.\n• <strong>Lionel Wirth</strong> (Mgr. Accounting) — Very few words. Asked only for numbers. Silence since then.\n• <strong>Greg Hertzhaft</strong> (Dir. Operations) — Said the project is \"not a priority\" for his department.\n\n🎯 Which 2 do you prioritise?'
+    },
+    choices: [
+      { id: 'A', it: 'Caterina Cissel — Director, Sales', en: 'Katherine Kissel — Director, Sales' },
+      { id: 'B', it: 'Francesco Mellini — Director, Marketing', en: 'Freeman Miller — Director, Marketing' },
+      { id: 'C', it: 'Teresa Uttini — Director, Industrial Manufacturing', en: 'Tara Uttridge — Director, Industrial Manufacturing' },
+      { id: 'D', it: 'Leonardo Bianchi — Manager, Accounting', en: 'Lionel Wirth — Manager, Accounting' },
+      { id: 'E', it: 'Gregorio Ertz — Director, Operations', en: 'Greg Hertzhaft — Director, Operations' }
+    ],
+    correct: ['C', 'D'],
+    scoring: 'multi',
+    explanation: {
+      it: 'Il principio chiave è: sposta il centro. Chi è già con te non ha bisogno di attenzione extra. Chi è chiaramente contro richiede un enorme investimento per un risultato incerto. Le persone che non si sono ancora espresse sono quelle su cui il tuo tempo vale di più.',
+      en: 'The key principle: move the middle. Those already with you need no extra investment. Those clearly against require enormous effort for uncertain results. The people who have not yet shown their position are where your time is most valuable.'
+    }
+  },
+  {
+    id: 7,
+    type: 'multi',
+    count: 3,
+    title: { it: 'Costruire la Presentazione — Struttura', en: 'Composing Your Presentation — Structure' },
+    time: '13:00',
+    scenario: {
+      it: 'Tra 2 giorni presenterai i risultati del team all\'Efficiency Committee. Hai saputo che il Committee potrebbe decidere di affidare il lavoro a un consulente esterno, oppure di rimandare la fase di soluzione all\'anno prossimo.\n\nConosci l\'orientamento dei membri del Committee e le loro motivazioni individuali. Sai anche quali sono i valori, i bisogni strategici e gli obiettivi di VTI.\n\n🎯 Come costruisci la tua presentazione? Seleziona le 3 strategie più efficaci:',
+      en: 'In 2 days you will present the team\'s findings to the Efficiency Committee. You\'ve heard the Committee may either bring in an outside consultant to continue the work, or shelve the solution phase until next year.\n\nYou know the orientation of the committee members and their individual motivations. You are also aware of VTI\'s values, strategic needs, and objectives.\n\n🎯 How do you build your presentation? Select the 3 most effective strategies:'
+    },
+    choices: [
+      { id: 'A', it: 'Apri con i dati finanziari di impatto direttamente collegati ai KPI dei membri del Committee.', en: 'Open with financial impact data directly linked to each committee member\'s KPIs.' },
+      { id: 'B', it: 'Inizia con una timeline dettagliata di come hai condotto l\'indagine.', en: 'Begin with a detailed timeline of how you conducted the investigation.' },
+      { id: 'C', it: 'Presenta le opzioni di soluzione prima dell\'analisi del problema.', en: 'Present solution options before presenting the problem analysis.' },
+      { id: 'D', it: 'Personalizza l\'argomentazione per ogni membro del Committee in base a ciò che conta di più per loro.', en: 'Customise the argument for each committee member based on what matters most to them.' },
+      { id: 'E', it: 'Presenta tutti i dati in modo uniforme a ogni membro del Committee.', en: 'Present all data equally and uniformly to every committee member.' },
+      { id: 'F', it: 'Affronta proattivamente le possibili obiezioni prima che vengano sollevate.', en: 'Proactively address potential objections before they are raised.' }
+    ],
+    correct: ['A', 'D', 'F'],
+    scoring: 'multi',
+    explanation: {
+      it: 'Una presentazione efficace parla il linguaggio di chi ascolta. Iniziare con i KPI (A) cattura immediatamente l\'attenzione dei decision maker. Personalizzare per ogni stakeholder (D) risponde alla domanda implicita di ciascuno: "Cosa significa questo per me?" Anticipare le obiezioni (F) dimostra che hai considerato tutte le prospettive e disarma la resistenza. Presentare la soluzione prima del problema (C) perde credibilità. La timeline del processo (B) è irrilevante per il Committee.',
+      en: 'An effective presentation speaks the language of the audience. Leading with KPIs (A) immediately captures decision-makers\' attention. Personalising for each stakeholder (D) answers each person\'s implicit question: "What does this mean for me?" Anticipating objections (F) shows you\'ve considered all perspectives and disarms resistance. Presenting solutions before the problem (C) loses credibility. The process timeline (B) is irrelevant to the Committee.'
+    }
+  },
+  {
+    id: 8,
+    type: 'single',
+    title: { it: 'Costruire la Presentazione — Contenuto', en: 'Composing Your Presentation — Content' },
+    time: '13:30',
+    scenario: {
+      it: 'Stai preparando una paginetta di proiezioni ROI diviso per reparto per l\'Efficiency Committee. Ti concentri su Leonardo Bianchi (Accounting) e Teresa Uttini (Manufacturing) — i due neutrali che devi conquistare.\n\nUna fonte interna ti dice: "Leonardo risponde solo ai numeri duri. Teresa vuole vedere concretezza operativa — come impatterà sul processo di produzione."\n\nHai 5 argomenti a disposizione. Devi decidere quale presentare per primo — quello che aprirà meglio le porte con entrambi.\n\n🎯 Quale argomento usi come opening principale della tua presentazione?',
+      en: 'As you prepare the presentation for the Efficiency Committee, you focus on Lionel Wirth (Accounting) and Tara Uttridge (Manufacturing) — the two neutrals you need to win over.\n\nAn internal source tells you: "Lionel only responds to hard numbers. Tara wants to see operational concreteness — how it will impact the production process."\n\nYou have 5 arguments available. You must decide which to lead with — the one that will open doors best with both of them.\n\n🎯 Which argument do you use as the main opening of your presentation?'
+    },
+    choices: [
+      { id: 'A', it: 'La storia del progetto: come è nato, chi è coinvolto, perché è importante per VTI.', en: 'The project history: how it started, who is involved, why it matters to VTI.' },
+      { id: 'B', it: 'L\'impatto finanziario diretto: proiezioni di recupero del fatturato e ROI per ogni reparto coinvolto.', en: 'Direct financial impact: revenue recovery projections and ROI for each department involved.' },
+      { id: 'C', it: 'Una testimonianza del team su quanto ha lavorato duramente nelle ultime settimane.', en: 'A team testimonial about how hard everyone has worked over the past weeks.' },
+      { id: 'D', it: 'Un\'analisi di benchmark che mostri come i competitor hanno risolto problemi simili, con risultati finanziari concreti.', en: 'A benchmark analysis showing how competitors solved similar problems, with concrete financial outcomes.' },
+      { id: 'E', it: 'Una visione ispirazionale del futuro di Virtu-Fit se la soluzione viene implementata.', en: 'An inspirational vision of Virtu-Fit\'s future if the solution is implemented.' }
+    ],
+    correct: ['B'],
+    scoring: 'single',
+    explanation: {
+      it: 'Leonardo risponde solo ai numeri duri — l\'argomento B è fatto apposta per lui. Teresa, pur richiedendo concretezza operativa, risponde anche ai dati finanziari perché ogni Director è valutato sulle performance economiche del proprio reparto. L\'impatto finanziario (B) è il linguaggio universale del business: parla sia alla logica analitica di Leonardo che alla mentalità operativa di Teresa. Le altre opzioni sono secondarie o inefficaci come apertura.',
+      en: 'Lionel only responds to hard numbers — argument B is built for him. Tara, while requiring operational concreteness, also responds to financial data because every Director is measured on their department\'s economic performance. Financial impact (B) is the universal language of business: it speaks to both Lionel\'s analytical logic and Tara\'s operational mindset. The other options are secondary or ineffective as an opening.'
+    }
+  },
+  {
+    id: 9,
+    type: 'single',
+    title: { it: 'Ottenere Aiuto dalle Vendite', en: 'Getting Help from Sales' },
+    time: '14:15',
+    scenario: {
+      it: 'Domani partecipi a una conference call con Melania per convincere un gruppo di senior Account Executive a dedicare parte del loro tempo, nella prossima settimana, a lavorare sulle soluzioni del progetto.\n\nVoi due potreste andare alla call da soli, oppure portare qualcuno con voi. Gli Account Executive sono professionisti orientati al cliente — sono valutati sui risultati con i loro account, non sulle priorità interne.\n\nChi scegli come supporto per la call?\n\n🎯 Seleziona il partecipante aggiuntivo più efficace:',
+      en: 'Tomorrow you and Melanie will be on a conference call trying to persuade a group of senior Account Executives to give some of their time next week to work on project solutions.\n\nThe two of you could go to the call alone, or bring someone to help. The Account Executives are client-focused professionals — they are measured on results with their accounts, not on internal priorities.\n\nWho do you choose as support for the call?\n\n🎯 Select the most effective additional participant:'
+    },
+    choices: [
+      { id: 'A', it: 'L\'Assistant Vice President for Virtu-Fit Sales — per mostrare peso gerarchico.', en: 'The Assistant Vice President for Virtu-Fit Sales — to show hierarchical weight.' },
+      { id: 'B', it: 'Un Marketing Associate del team Virtu-Fit — per aggiungere expertise di prodotto.', en: 'A Virtu-Fit Team Marketing Associate — to add product expertise.' },
+      { id: 'C', it: 'Il Regional Sales Manager — autorità di linea sugli Account Executive (reparto commerciale).', en: 'The Regional Sales Manager — line authority over the AEs.' },
+      { id: 'D', it: 'Un Sales Executive di Rally\'s Fitness Centers — il cliente più importante degli AE.', en: 'A Sales Executive from Rally\'s Fitness Centers — the AEs\' most important client.' },
+      { id: 'E', it: 'Andate soli, senza supporto esterno.', en: 'Go without additional support.' }
+    ],
+    correct: ['D'],
+    scoring: 'single',
+    explanation: {
+      it: 'Gli Account Executive si fidano dei loro clienti più di qualsiasi voce interna. Un Sales Executive di Rally\'s Fitness Centers — il loro account principale — che supporta il progetto vale molto più di qualsiasi autorità gerarchica. La domanda fondamentale è: a chi prestano attenzione gli AE? Non al loro manager, non all\'AVP — ma ai loro clienti chiave. Portare la voce del cliente nella call trasforma la dinamica completamente.',
+      en: 'Account Executives trust their clients more than any internal voice. A Sales Executive from Rally\'s Fitness Centers — their key account — who supports the project is worth far more than any hierarchical authority. The fundamental question is: who do AEs listen to? Not their manager, not the AVP — but their key clients. Bringing the client\'s voice into the call completely transforms the dynamic.'
+    }
+  },
+  {
+    id: 10,
+    type: 'single',
+    title: { it: 'Lavorare con Luca', en: 'Working with Lucas' },
+    time: '15:00',
+    scenario: {
+      it: 'Dopo la riunione andata male con Teresa e i senior engineers di Manufacturing, Melania, Carlo e Zinah vengono da te individualmente per esprimere le loro preoccupazioni sul comportamento di Luca — un membro del team che sta creando tensione e non sta cooperando.\n\nNon hai mai affrontato formalmente questo problema con Luca. Ma ora non puoi più evitarlo.\n\nLuca è tecnicamente bravo. Non ha autorità formale nel team — sei tu il responsabile. È noto per avere un ego forte e per non essere abituato a ricevere feedback negativi.\n\n🎯 Cosa fai?',
+      en: 'After the derailed meeting with Tara and the senior engineers from Manufacturing, Melanie, Chuck, and Zinah come to you individually to voice their concerns about Lucas\'s behaviour — a team member who is creating tension and not cooperating.\n\nYou have never formally addressed this issue with Lucas before. But now you can no longer avoid it.\n\nLucas is technically strong. He has no formal authority in the team — you are the responsible person. He is known for having a strong ego and not being used to receiving negative feedback.\n\n🎯 What do you do?'
+    },
+    choices: [
+      { id: 'A', it: 'Cerca di capire cosa ha bisogno Luca per sentirsi più coinvolto nel team.', en: 'Try to find out what Lucas needs to feel more engaged in the team.' },
+      { id: 'B', it: 'Digli direttamente e onestamente quello che hai sentito sul suo comportamento.', en: 'Tell him directly and honestly what you have been hearing about his behaviour.' },
+      { id: 'C', it: 'Offriti di dargli un ruolo più grande nel progetto se coopera di più.', en: 'Offer him a greater role in the project if he cooperates more.' },
+      { id: 'D', it: 'Organizza una riunione di team per riallineare tutti sugli obiettivi del progetto.', en: 'Organise a team meeting to realign everyone on the project goals.' },
+      { id: 'E', it: 'Rimuovi Luca dal team del progetto.', en: 'Remove Lucas from the project team.' }
+    ],
+    correct: ['A'],
+    scoring: 'single',
+    explanation: {
+      it: 'Prima di dare feedback, bisogna capire il contesto. Una persona che cerca visibilità risponde meglio all\'inclusione che alla correzione. Chiedere a Luca cosa gli serve per sentirsi più coinvolto apre uno spazio di dialogo — il feedback diretto su una persona ego-riferita rischia di far rigirare la frittata. Capire prima, poi agire.',
+      en: 'Before giving feedback, understand the context. A person seeking visibility responds better to inclusion than correction. Asking Luca what he needs to feel more engaged opens a dialogue — direct feedback with an ego-driven person risks them flipping the narrative. Understand first, then act.'
+    }
+  },
+  {
+    id: 11,
+    type: 'rank3of',
+    count: 3,
+    totalChoices: 7,
+    title: { it: 'Altri Problemi con Sandro', en: 'More Problems with Sam' },
+    time: '15:45',
+    scenario: {
+      it: 'Carlo ti ha informato che i problemi con Sandro Lorini continuano. Nelle ultime settimane hai provato diversi approcci — nessuno ha funzionato. Hai bisogno di Sandro per sviluppare un piano di implementazione completo e per l\'implementazione stessa. La sua area è critica per il successo della soluzione.\n\nSam non sta mandando i report, ha rifiutato un incontro faccia a faccia con Carlo, e sembra intenzionato a bloccare il progetto.\n\n🎯 Seleziona e classifica le tue 3 azioni migliori (ordine importante):',
+      en: 'Chuck has informed you that problems with Sam Loricke continue. In the past few weeks you\'ve tried several approaches — none of which have worked. You need Sam to develop a comprehensive implementation plan and for the implementation itself. His area is critical to the success of your solution.\n\nSam is not sending the reports, has refused a face-to-face meeting with Chuck, and seems determined to block the project.\n\n🎯 Select and rank your top 3 actions (order matters):'
+    },
+    choices: [
+      { id: 'A', it: 'Manda a Sandro un riepilogo scritto diretto di quello che hai bisogno e perché è importante per VTI.', en: 'Send Sam a direct written summary of what you need and why it matters for VTI.' },
+      { id: 'B', it: 'Scala immediatamente a Noele e chiedigli di chiamare il VP di Manufacturing.', en: 'Immediately escalate to Noel and ask him to call the VP of Manufacturing.' },
+      { id: 'C', it: 'Organizza un workshop congiunto con il team di Sandro e il tuo per trovare un terreno comune.', en: 'Organise a joint workshop with Sam\'s team and yours to find common ground.' },
+      { id: 'D', it: 'Chiedi di nuovo a un collega di Sandro di mediare.', en: 'Ask a colleague of Sam\'s to mediate again.' },
+      { id: 'E', it: 'Fai un\'argomentazione chiara a Sandro: le sue metriche di efficienza Q3 migliorano se i 6 data entry clerk restano durante l\'implementazione. Mostragli cosa ci guadagna concretamente.', en: 'Make a clear case to Sam: his Q3 efficiency metrics improve if the 6 data entry clerks stay through implementation. Show him what he concretely gains.' },
+      { id: 'F', it: 'Chiedi a Gregorio di Operations di fare pressione su Sandro dal suo lato.', en: 'Ask Greg from Operations to put pressure on Sam from his side.' },
+      { id: 'G', it: 'Di\' a Sandro in modo diretto e senza filtri quali saranno le conseguenze per il progetto — e per lui — se continua a bloccare.', en: 'Tell Sam plainly and without filters what the consequences will be for the project — and for him — if he continues to block.' }
+    ],
+    correct: ['E', 'A', 'G'],
+    scoring: 'rank3of',
+    explanation: {
+      it: 'Quando le negoziazioni sono difficili: prima offri il WIIFM una o due volte (E) — cosa ci guadagna Sandro? Se non funziona, usa un canale scritto per essere chiaro e documentato (A). Come ultima risorsa, esplicita le conseguenze del non collaborare (G) — direttamente, senza ambiguità. L\'ordine conta: non partire dalle conseguenze, ma arrivarci dopo aver tentato vie più collaborative. L\'escalation immediata (B) e la pressione laterale (F) bruciano le relazioni senza risolvere il problema.',
+      en: 'When negotiations are difficult: first offer the WIIFM once or twice (E) — what\'s in it for Sam? If that doesn\'t work, use a written channel to be clear and documented (A). As a last resort, state the consequences of non-cooperation explicitly (G) — directly, without ambiguity. Order matters: don\'t start with consequences, but arrive there after attempting more collaborative approaches. Immediate escalation (B) and lateral pressure (F) burn relationships without solving the problem.'
+    }
+  },
+  {
+    id: 12,
+    type: 'single',
+    title: { it: 'Influenzare il Team', en: 'Influencing the Team' },
+    time: '16:30',
+    scenario: {
+      it: 'Il Director del tuo dipartimento ha bisogno urgente di dati sulle vendite di Virtu-Fit per un report da presentare al board sabato — e anche domenica, se necessario. Questo lavoro è fuori dallo scope del tuo progetto, ma il Director ne ha bisogno. Il tuo team è già la fonte migliore di questi dati.\n\nIl problema: il team sta già facendo straordinari ogni settimana sul progetto. Il morale è sotto pressione. Chiedere questo favore potrebbe essere la goccia che fa traboccare il vaso.\n\n🎯 Cosa dici al team per convincerlo ad aiutarti?',
+      en: 'Your department Director urgently needs Virtu-Fit sales data for a report to be presented to the board on Saturday — and Sunday too if necessary. This work is outside your project scope, but the Director needs it. Your team is the best available source for this data.\n\nThe problem: the team is already putting in extra hours every week on the project. Morale is under pressure. Asking for this favour could be the last straw.\n\n🎯 What do you say to the team to convince them to help?'
+    },
+    choices: [
+      { id: 'A', it: 'Dici loro che la direttiva viene dal senior management — non c\'è scelta.', en: 'Tell them the directive comes from senior management — there is no choice.' },
+      { id: 'B', it: 'Ti offri di fare il lavoro da solo senza coinvolgere il team.', en: 'Offer to do the work yourself without involving the team.' },
+      { id: 'C', it: 'Spiega l\'importanza strategica, collegala allo sviluppo di carriera di ciascuno, e proponi un passo concreto.', en: 'Explain the strategic importance, connect it to each person\'s career development, and propose a concrete next step.' },
+      { id: 'D', it: 'Chiedi prima — fai la richiesta, spiega perché conta, e dai loro la possibilità di dire sì o no.', en: 'Ask first — make the request, explain why it matters, and give them the genuine opportunity to say yes or no.' }
+    ],
+    correct: ['D'],
+    scoring: 'single',
+    explanation: {
+      it: 'Prima chiedi, poi eventualmente comanda — mai il contrario. Dare al team la possibilità genuina di rispondere "sì" o "no" mantiene l\'autonomia e il rispetto. Le persone che scelgono di aiutare sono molto più efficaci di quelle che si sentono obbligate. Usare l\'autorità gerarchica (A) quando non è necessario genera risentimento. Fare tutto da solo (B) non è sostenibile. Sperare nel volontariato (C) è passivo. Chiedi sempre, qualunque sia la situazione.',
+      en: 'Ask first, then command if necessary — never the other way around. Giving the team the genuine ability to say yes or no maintains autonomy and respect. People who choose to help are far more effective than those who feel obligated. Using hierarchical authority (A) when unnecessary generates resentment. Doing it all yourself (B) is unsustainable. Hoping for volunteers (C) is passive. Always ask, whatever the situation.'
+    }
+  },
+  {
+    id: 13,
+    type: 'single',
+    title: { it: 'L\'Ultimo Scontro con Sandro', en: 'One Last Bout with Sam' },
+    time: '17:15',
+    scenario: {
+      it: 'Sandro è fondamentale per la parte di Order Fulfillment del piano di implementazione, ma si sta rifiutando di cooperare. Sei fermamente convinto che i 6 data entry clerk che intende licenziare siano necessari per il successo dell\'implementazione.\n\nSam ha minacciato di combattere questa battaglia e vincerla. Sembra che tu non abbia più credibilità o influenza su di lui. Ha il supporto del VP del Manufacturing alle spalle.\n\nHai esaurito tutti gli approcci collaborativi. Questo è il momento della verità.\n\n🎯 Cosa fai?',
+      en: 'Sam is critical to the Order Fulfillment part of the implementation plan, but he is refusing to cooperate. You feel very strongly that the 6 data entry clerks he intends to lay off are necessary for a successful implementation.\n\nSam has threatened to fight this battle and win. You appear to have no credibility or influence left with him. He has the backing of the VP of Manufacturing.\n\nYou have exhausted all collaborative approaches. This is the moment of truth.\n\n🎯 What do you do?'
+    },
+    choices: [
+      { id: 'A', it: 'Vai avanti. I 6 clerk sono critici. Hai la responsabilità del progetto e verso VTI — devi portare avanti ciò che ritieni giusto, anche di fronte all\'opposizione.', en: 'Pursue the issue. The 6 clerks are critical. You have a responsibility to the project and to VTI — you must fight for what you believe is right, even facing opposition.' },
+      { id: 'B', it: 'Lascia andare. Sandro ha il VP alle spalle. Non ogni battaglia vale il costo. La tua responsabilità è verso VTI, non verso lo scontro con Sandro — scegli le battaglie con saggezza.', en: 'Let it go. Sam has the VP\'s backing. Not every battle is worth the cost. Your responsibility is to VTI, not to a conflict with Sam — choose your battles wisely.' }
+    ],
+    correct: ['A', 'B'],
+    scoring: 'single',
+    explanation: {
+      it: 'Entrambe le risposte riflettono una maturità nell\'influenza. Andare avanti (A) significa parlare al potere con coraggio quando sei convinto della cosa giusta — questa è l\'influenza nella sua forma più forte. Lasciare andare (B) significa capire che la responsabilità è verso l\'azienda, non verso lo scontro personale: non si combatte ogni battaglia, si sceglie dove spendere la propria influenza. Nessuna delle due è sbagliata — dipende da quanto sei convinto che i 6 clerk siano davvero critici e da quale impatto avrà la battaglia sul tuo capitale di influenza futuro.',
+      en: 'Both answers reflect influence maturity. Pursuing the issue (A) means speaking truth to power when you are convinced of what is right — this is influence at its most powerful. Letting go (B) means understanding that your responsibility is to the company, not to personal conflict: you do not fight every battle, you choose where to invest your influence. Neither is wrong — it depends on how strongly you believe the 6 clerks are truly critical, and what effect the battle will have on your future influence capital.'
+    }
+  }
+];
+
+// ═══════════════════════════════════════════════════════════
+// GOSSIP PACKS (shown between rounds)
+// ═══════════════════════════════════════════════════════════
+const GOSSIP_PACKS = [
+  [
+    { type: 'corridor', from: 'Corridoio — Piano 4', relevant: true, subject: { it: 'Sentito stamattina...', en: 'Overheard this morning...' }, body: { it: '"Leonardo di Accounting ha già chiesto i dati finanziari di Virtu-Fit. Vuole vedere i numeri prima di approvare qualsiasi budget." Forse vale la pena tenerlo in considerazione.', en: '"Lionel from Accounting has already asked for the Virtu-Fit financial data. He wants to see the numbers before approving any budget." Might be worth keeping in mind.' }, time: '08:02' }
+  ],
+  [
+    { type: 'email', from: 'Freeman Miller', relevant: true, subject: { it: 'Indagine Virtu-Fit', en: 'Virtu-Fit investigation' }, body: { it: 'Noele, ho sentito che qualcuno sta facendo domande su Virtu-Fit. Il Marketing deve essere coinvolto in qualsiasi scoperta. Possiamo coordinare?', en: 'Noel, I\'ve heard someone is asking questions about Virtu-Fit. Marketing needs to be involved in any findings. Can we coordinate?' }, time: '08:52' },
+    { type: 'corridor', from: 'Mensa — Piano 2', relevant: true, subject: { it: 'Chiacchiere di mensa', en: 'Cafeteria talk' }, body: { it: '"Ho visto Zinah dell\'Accounting ieri sera all\'evento alumni. Conosce mezzo ufficio già. È sorprendente per qualcuno che è qui da poco." Interessante.', en: '"I saw Zinah from Accounting at the alumni event last night. She already knows half the office. Surprising for someone who hasn\'t been here long." Interesting.' }, time: '09:15' },
+    { type: 'email', from: 'Contatto interno (anonimo)', relevant: true, subject: { it: 'Su Zinah', en: 'About Zinah' }, body: { it: 'L\'anno scorso Zinah ha lavorato su un progetto cross-funzionale tra Marketing e Operations. Ha ricevuto feedback eccellenti da entrambi i lati. È brava a navigare i silos aziendali.', en: 'Last year Zinah worked on a cross-functional project between Marketing and Operations. She received excellent feedback from both sides. She\'s good at navigating company silos.' }, time: '10:10' }
+  ],
+  [
+    { type: 'email', from: 'Chuck Fuertes', relevant: true, subject: { it: 'Attenzione: Manufacturing è sulla difensiva', en: 'Heads up: Manufacturing is defensive' }, body: { it: 'Ho preso un caffè con qualcuno di I-Manufacturing. Stanno già lavorando al loro piano di reengineering e vedono qualsiasi interruzione come una minaccia. Approccio con cautela. Devi dargli qualcosa di concreto da guadagnare.', en: 'Had coffee with someone from I-Manufacturing. They\'re already working on their reengineering plan and see any interruption as a threat. Approach carefully. You need to give them something concrete to gain.' }, time: '10:45' }
+  ],
+  [
+    { type: 'corridor', from: 'Atrio — Pianterreno', relevant: true, subject: { it: 'Sandro e il VP', en: 'Sam and the VP' }, body: { it: '"Ho visto Sandro Lorini e il VP di Manufacturing uscire insieme a pranzo. Sembravano molto in confidenza — risate, pacche sulla spalla. Sandro ha un sacco di protezione lì sopra."', en: '"I saw Sam Loricke and the VP of Manufacturing going out to lunch together. They seemed very close — laughing, shoulder pats. Sam has a lot of protection up there."' }, time: '11:52' },
+    { type: 'email', from: 'HR — Info generale', relevant: true, subject: { it: 'Profilo: Sandro Lorini', en: 'Profile: Sam Loricke' }, body: { it: 'Sandro è in VTI da quasi 20 anni. Sa dove sono sepolti i corpi aziendali. Non è abituato a sentirsi dire no. Gli approcci diretti con lui raramente funzionano con chi non fa parte del suo cerchio di fiducia.', en: 'Sam has been at VTI for nearly 20 years. He knows where the corporate bodies are buried. He\'s not used to being told no. Direct approaches from outside his trust circle rarely work with him.' }, time: '12:05' }
+  ],
+  [
+    { type: 'email', from: 'Noel Huffman', relevant: true, subject: { it: 'Efficiency Committee — 10 giorni', en: 'Efficiency Committee — 10 days' }, body: { it: 'L\'Efficiency Committee si riunisce tra 10 giorni. Ho saputo che Teresa ha iniziato a fare domande sul nostro progetto — non so ancora se è favorevole o neutrale. Vale la pena esplorarlo. Leonardo non si è ancora espresso su nulla, il che è strano per lui.', en: 'The Efficiency Committee meets in 10 days. I\'ve heard Tara has started asking questions about our project — I\'m not sure yet if she\'s for it or neutral. Worth exploring. Lionel hasn\'t expressed an opinion on anything yet, which is unusual for him.' }, time: '12:28' },
+    { type: 'corridor', from: 'Area caffè — Piano 4', relevant: true, subject: { it: 'Gregorio è contrario', en: 'Greg is against it' }, body: { it: '"Gregorio di Operations ha detto ai suoi che il progetto Virtu-Fit è una perdita di tempo e risorse. Meglio sapere in anticipo." Informazione utile: non sprecare energia su Gregorio.', en: '"Greg from Operations told his team that the Virtu-Fit project is a waste of time and resources. Better to know in advance." Useful information: don\'t waste energy on Greg.' }, time: '12:40' }
+  ],
+  [
+  ],
+  [
+    { type: 'email', from: 'Zinah (Team Member)', relevant: true, subject: { it: 'Ricerca sui membri del Committee', en: 'Research on Committee members' }, body: { it: 'Ho fatto qualche ricerca sui membri del Committee. Leonardo risponde solo ai dati finanziari concreti — ROI, proiezioni, numeri duri. Se non puoi quantificarlo, per lui non esiste. Teresa vuole vedere come la soluzione impatta sul processo operativo — concretezza, non visioni.', en: 'I did some research on the Committee members. Lionel only responds to concrete financial data — ROI, projections, hard numbers. If you can\'t quantify it, it doesn\'t exist for him. Tara wants to see how the solution impacts the operational process — concreteness, not visions.' }, time: '13:15' },
+    { type: 'corridor', from: 'Sala riunioni B', relevant: true, subject: { it: 'Voce di corridoio', en: 'Corridor rumour' }, body: { it: '"Ho sentito che all\'ultimo Committee Teresa ha cambiato posizione su un progetto grazie a un\'unica slide con i dati di impatto sulla produzione. Ama la concretezza operativa." Da tenere a mente.', en: '"I heard that at the last Committee, Tara changed position on a project thanks to a single slide with production impact data. She loves operational concreteness." Keep that in mind.' }, time: '13:30' }
+  ],
+  [
+    { type: 'email', from: 'Katherine Kissel', relevant: true, subject: { it: 'Rally\'s Fitness Centers — rinnovo', en: 'Rally\'s Fitness Centers — renewal' }, body: { it: 'Rally\'s ha appena rinnovato il contratto. Il loro Sales Executive stava chiedendo di Virtu-Fit Gen 4 — sono molto interessati alla roadmap futura. Account chiave per i nostri AE.', en: 'Rally\'s just renewed their contract. Their Sales Executive was asking about Virtu-Fit Gen 4 — very interested in the future roadmap. Key account for our AEs.' }, time: '14:02' },
+    { type: 'corridor', from: 'Open space Vendite', relevant: true, subject: { it: 'Come pensano gli AE', en: 'How AEs think' }, body: { it: '"I senior AE non si fidano delle persone interne. Preferiscono sentirsi dire le cose dai loro clienti. Se Rally\'s dice qualcosa, tutti ascoltano. Se lo dici tu, ti ignorano." Dinamica importante da capire.', en: '"The senior AEs don\'t trust internal people. They prefer to hear things from their clients. If Rally\'s says something, everyone listens. If you say it, they ignore you." Important dynamic to understand.' }, time: '14:20' }
+  ],
+  [
+    { type: 'email', from: 'Melanie (Team Member)', relevant: true, subject: { it: 'Aggiornamento su Luca', en: 'Update on Lucas' }, body: { it: 'Luca sta creando tensione in tutte le riunioni del team. Sembra voglia più visibilità sul progetto — o riconoscimento. Attenzione: non è abituato a ricevere feedback negativi, ha un ego forte. Ma il problema non può continuare.', en: 'Lucas is creating tension in every team meeting. He seems to want more visibility on the project — or recognition. Warning: he\'s not used to negative feedback, he has a strong ego. But the issue can\'t continue.' }, time: '14:52' },
+    { type: 'corridor', from: 'Corridoio — vicino alle scale', relevant: true, subject: { it: 'Luca si lamenta', en: 'Lucas complaining' }, body: { it: '"Ho sentito Luca lamentarsi con qualcuno in corridoio — diceva che il suo contributo non viene riconosciuto. Non sembrava contento del suo ruolo." Vale la pena affrontarlo direttamente.', en: '"I heard Lucas complaining to someone in the corridor — said his contribution isn\'t being recognised. He didn\'t look happy about his role." Worth addressing directly.' }, time: '15:05' }
+  ],
+  [
+    { type: 'email', from: 'Chuck Fuertes', relevant: true, subject: { it: 'Sandro ancora bloccato', en: 'Sam still blocking' }, body: { it: 'Sandro ancora non manda i report. Ho provato di tutto. Se continuiamo così, mancheremo la scadenza dell\'implementazione. Siamo in grossi guai se non riusciamo a sbloccare questa situazione. Ho bisogno che tu faccia qualcosa.', en: 'Sam still won\'t send the reports. I\'ve tried everything. If this continues, we\'ll miss the implementation deadline. We\'re in serious trouble if we can\'t unlock this. I need you to do something.' }, time: '15:55' },
+    { type: 'corridor', from: 'Sala pausa — Piano 3', relevant: true, subject: { it: 'Sandro è inamovibile', en: 'Sam won\'t budge' }, body: { it: '"Sandro ha detto a qualcuno che non gli importa delle conseguenze — pensa di essere intoccabile. Forse bisogna essere più diretti su cosa succederà se non coopera." Momento di essere franchi.', en: '"Sam told someone he doesn\'t care about the consequences — he thinks he\'s untouchable. Maybe it\'s time to be more direct about what will happen if he doesn\'t cooperate." Time to be frank.' }, time: '16:08' }
+  ],
+  [
+    { type: 'corridor', from: 'Open space Marketing', relevant: true, subject: { it: 'Il morale del team', en: 'Team morale' }, body: { it: '"Il team di Virtu-Fit sta già facendo straordinari ogni settimana. Il morale è basso. Attenzione a come chiedi altro lavoro — il modo in cui lo chiedi conta quanto quello che chiedi."', en: '"The Virtu-Fit team is already working overtime every week. Morale is low. Be careful how you ask for more — the way you ask matters as much as what you ask."' }, time: '16:10' }
+  ],
+  [
+    { type: 'email', from: 'Tara Uttridge', relevant: true, subject: { it: 'Piano di implementazione', en: 'Implementation plan' }, body: { it: 'Il piano di implementazione sembra solido. Ma sto sentendo che Sandro ha seri problemi con i 6 data entry clerk. Dice che sono ridondanti. Se non si risolve questo, l\'implementazione è a rischio. Questo potrebbe essere l\'ultimo ostacolo.', en: 'The implementation plan looks solid. But I\'m hearing Sam has serious issues with the 6 data entry clerks. He says they\'re redundant. If this isn\'t resolved, the implementation is at risk. This could be the final obstacle.' }, time: '17:02' },
+    { type: 'corridor', from: 'Parcheggio — uscita Nord', relevant: true, subject: { it: 'Sandro non si ritirerà', en: 'Sam won\'t back down' }, body: { it: '"Sandro ha detto in giro che non si ritirerà su questa cosa dei 6 impiegati. Ha già parlato con il VP. Dice che vincerà questa battaglia." Ora sai tutto. La decisione è tua.', en: '"Sam has been saying he won\'t back down on the 6 clerks issue. He\'s already talked to the VP. Says he\'ll win this battle." Now you know everything. The decision is yours.' }, time: '17:15' }
+  ]
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let state = {
+  lang: 'it',
+  teamName: '',
+  currentRound: 0,
+  answers: [
+  ],
+  totalScore: 0,
+  phase: 'read',
+  readRemaining: 120,
+  answerRemaining: 300,
+  readInterval: null,
+  answerInterval: null,
+  overtime: false,
+  overtimePenaltyApplied: false,
+  selectedChoices: [
+  ],
+  rankOrder: [
+  ],
+  answerSubmitted: false,
+  currentGossipPack: 0,
+  allFeedCards: [
+  ],
+  likability: 50,
+  bonusPoints: 0,
+  nameCheckTimeout: null,
+};
+
+// ═══════════════════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════════════════
+function setLang(lang) {
+  state.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    if (T[lang][key] !== undefined) el.innerHTML = T[lang][key];
+  });
+  document.querySelectorAll('[data-placeholder-' + lang + ']').forEach(el => {
+    el.placeholder = el.getAttribute('data-placeholder-' + lang);
+  });
+  // Do NOT re-render game content mid-round — language locked once game starts
+  // Update all name spans
+  document.querySelectorAll('[data-name]').forEach(el => {
+    const key = el.getAttribute('data-name');
+    if (NAMES[lang] && NAMES[lang][key]) el.textContent = NAMES[lang][key];
+  });
+  // Update org chart SVG text nodes
+  updateOrgChartNames(lang);
+}
+
+function updateOrgChartNames(lang) {
+  // SVG org chart text nodes
+  const svg = document.querySelector('.org-svg');
+  if (svg) {
+    svg.querySelectorAll('text').forEach(el => {
+      // Cache original EN text on first call
+      if (!el.getAttribute('data-en')) el.setAttribute('data-en', el.textContent);
+      const en = el.getAttribute('data-en');
+      if (lang === 'it') {
+        let txt = en;
+        Object.entries(EN_TO_IT_NAMES).forEach(([e,i]) => { txt = txt.split(e).join(i); });
+        // Also handle abbreviated forms
+        txt = txt.replace('O.C. TAFT','O.C. TAFFI').replace('F. MILLER','F. MELLINI')
+          .replace('L. WIRTH','L. BIANCHI').replace('G. HERTZHAFT','G. ERTZ')
+          .replace('T. UTTRIDGE','T. UTTINI').replace('K. KISSEL','C. CISSEL')
+          .replace('N. HUFFMAN','N. FERRARI').replace('S. LORICKE','S. LORINI')
+          .replace('C. FUERTES','C. FUENTES').replace('Founder & CEO','Fondatore & CEO')
+          .replace('Team Member','Membro Team').replace('IL TUO CAPO','IL TUO CAPO');
+        el.textContent = txt;
+      } else {
+        el.textContent = en; // restore original EN
+      }
+    });
+  }
+  // Char cards — use data-original to cache EN text
+  document.querySelectorAll('.char-card-name, .char-card-role, .char-card-note').forEach(el => {
+    if (el.getAttribute('data-name')) return;
+    if (!el.getAttribute('data-original')) {
+      el.setAttribute('data-original', el.textContent);
+    }
+    const original = el.getAttribute('data-original');
+    if (lang === 'it') {
+      let txt = original;
+      Object.entries(EN_TO_IT_NAMES).forEach(([en,it]) => { txt = txt.split(en).join(it); });
+      el.textContent = txt;
+    } else {
+      el.textContent = original;
+    }
+  });
+}
+function t(key) { return T[state.lang][key] || key; }
+
+// ═══════════════════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const scr = document.getElementById('screen-' + name);
+  scr.classList.add('active');
+  window.scrollTo(0, 0);
+  // Also scroll the game-main panel to top if applicable
+  const main = document.getElementById('game-main');
+  if (main) main.scrollTop = 0;
+}
+
+// ═══════════════════════════════════════════════════════════
+// REGISTRATION
+// ═══════════════════════════════════════════════════════════
+let nameCheckTimer = null;
+function onNameInput() {
+  const val = document.getElementById('team-name-input').value.trim();
+  const status = document.getElementById('name-status');
+  const btn = document.getElementById('btn-register');
+  document.getElementById('team-name-input').classList.remove('error', 'ok');
+  btn.disabled = true;
+  clearTimeout(nameCheckTimer);
+  if (val.length < 3) {
+    status.textContent = val.length > 0 ? t('name_short') : '';
+    status.className = 'input-status error';
+    return;
+  }
+  status.textContent = t('checking');
+  status.className = 'input-status checking';
+  nameCheckTimer = setTimeout(() => checkNameAvailability(val), 600);
+}
+
+async function checkNameAvailability(name) {
+  const status = document.getElementById('name-status');
+  const btn = document.getElementById('btn-register');
+  const input = document.getElementById('team-name-input');
+  try {
+    const url = `${SCRIPT_URL}?action=checkName&name=${encodeURIComponent(name)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.available) {
+      status.textContent = t('name_ok');
+      status.className = 'input-status ok';
+      input.classList.add('ok');
+      btn.disabled = false;
+    } else {
+      status.textContent = t('name_taken');
+      status.className = 'input-status error';
+      input.classList.add('error');
+    }
+  } catch (e) {
+    // If API unavailable, allow locally (will handle on submit)
+    status.textContent = t('name_ok');
+    status.className = 'input-status ok';
+    input.classList.add('ok');
+    btn.disabled = false;
+  }
+}
+
+async function tryRegister() {
+  const name = document.getElementById('team-name-input').value.trim();
+  if (name.length < 3) return;
+  const btn = document.getElementById('btn-register');
+  btn.disabled = true;
+  btn.textContent = t('checking');
+  try {
+    const url = `${SCRIPT_URL}?action=register&name=${encodeURIComponent(name)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.success) {
+      state.teamName = name;
+      const badge = document.getElementById('team-badge');
+badge.textContent = name.length > 12 ? name.slice(0,12)+'…' : name;
+
+      document.getElementById('team-badge').style.display = 'flex';
+      showScreen('briefing');
+    } else {
+      document.getElementById('name-status').textContent = t('name_taken');
+      document.getElementById('name-status').className = 'input-status error';
+      btn.disabled = false;
+      btn.innerHTML = t('btn_register');
+    }
+  } catch (e) {
+    // Offline fallback
+    state.teamName = name;
+    const badge = document.getElementById('team-badge');
+badge.textContent = name.length > 12 ? name.slice(0,12)+'…' : name;
+
+    document.getElementById('team-badge').style.display = 'flex';
+    showScreen('briefing');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// GAME START
+// ═══════════════════════════════════════════════════════════
+function startGame() {
+  document.getElementById('header-clock').style.display = 'flex';
+  document.getElementById('round-badge').style.display = 'block';
+  document.getElementById('progress-strip').style.display = 'block';
+  const lm = document.getElementById('like-meter');
+  if (lm) lm.style.display = 'flex';
+  // Lock language — hide toggle once game starts
+  document.getElementById('char-panel-btn').style.display = 'block';
+  renderCharPanel();
+  const lt = document.querySelector('.lang-toggle');
+  if (lt) { lt.style.opacity='0.3'; lt.style.pointerEvents='none'; lt.title='Language locked for this session'; }
+  // Show briefing gossip
+  showGossipTransition(0, true);
+}
+
+// ═══════════════════════════════════════════════════════════
+// GOSSIP TRANSITION
+// ═══════════════════════════════════════════════════════════
+
+// ── SOCIAL PROOF ────────────────────────────────────
+
+
+
+
+function showGossipTransition(packIndex, isIntro, bypassMinigame) {
+  // Minigame intercept
+  if (!isIntro && !bypassMinigame && typeof MINIGAME_SCHEDULE !== 'undefined' && MINIGAME_SCHEDULE[packIndex]) {
+    const type = MINIGAME_SCHEDULE[packIndex];
+    if (type === 'elevator') { startElevator(packIndex); return; }
+    if (type === 'watercooler') { startWaterCooler(packIndex); return; }
+    if (type === 'reciprocity') { startReciprocity(packIndex); return; }
+    if (type === 'socialproof') { startSocialProof(packIndex); return; }
+  }
+  const pack = GOSSIP_PACKS[packIndex] || [
+  ];
+  const nextRound = packIndex + 1;
+  const timeStr = packIndex === 0 ? '08:00' : MOMENTS[packIndex - 1] ? MOMENTS[packIndex - 1].time : '08:00';
+
+  document.getElementById('gossip-clock').textContent = timeStr;
+  document.getElementById('header-clock').textContent = timeStr;
+
+  const feed = document.getElementById('gossip-feed');
+  const feedHTML = document.querySelector('.gossip-feed-title').outerHTML;
+  feed.innerHTML = feedHTML;
+  if (packIndex <= 1) {
+    const instrEl = document.createElement('div');
+    instrEl.style.cssText = 'font-size:11px;color:var(--teal);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:8px';
+    instrEl.textContent = t('gossip_instruction');
+    feed.appendChild(instrEl);
+  }
+
+  pack.forEach((card, i) => {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = `gossip-card ${card.type}-card`;
+      el.style.animationDelay = '0s';
+      const relevanceTag = card.relevant ? '<span style="background:var(--teal);color:var(--navy);padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;margin-left:6px">📌</span>' : '';
+      const typeLabel = card.type === 'email' ? (state.lang === 'it' ? 'Email' : 'Email') :
+                        card.type === 'corridor' ? (state.lang === 'it' ? 'Corridoio' : 'Corridor') : 'Calendar';
+      el.innerHTML = localizeText(`
+        <div class="gossip-card-header">
+          <span class="gossip-type-label">${typeLabel}${relevanceTag}</span>
+          <span class="gossip-time-sent">${card.time}</span>
+        </div>
+        ${card.type === 'email' ? `<div class="gossip-from">${localizeText(card.from)}</div>` : `<div class="gossip-from">${localizeText(card.from)}</div>`}
+        <div class="gossip-subject">${card.subject[state.lang]}</div>
+        <div class="gossip-body">${card.body[state.lang]}</div>
+      `);
+      feed.appendChild(el);
+      // Add to persistent feed
+      state.allFeedCards.push(card);
+    }, i * 600);
+  });
+
+  // Update next button
+  const btnNext = document.getElementById('btn-next-round');
+  if (packIndex === 0) {
+    btnNext.innerHTML = t('btn_start_game') || '▶ Inizia il Momento 1';
+  } else {
+    btnNext.innerHTML = `${t('btn_next_round')} (${t('round_label')} ${nextRound}/13)`;
+  }
+  btnNext.onclick = () => {
+    if (packIndex < MOMENTS.length) loadRound(nextRound);
+  };
+
+  showScreen('gossip');
+  updateProgress(packIndex === 0 ? 0 : packIndex);
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOAD ROUND
+// ═══════════════════════════════════════════════════════════
+function loadRound(roundNum) {
+  clearIntervals();
+  state.currentRound = roundNum;
+  state.phase = 'read';
+  state.readRemaining = 120;
+  state.answerRemaining = 600;
+  state.overtime = false;
+  state.overtimePenaltyApplied = false;
+  state.answerSubmitted = false;
+  state.selectedChoices = [
+  ];
+  state.rankOrder = [
+  ];
+
+  const moment = MOMENTS[roundNum - 1];
+  document.getElementById('header-clock').textContent = moment.time;
+  document.getElementById('round-badge').innerHTML = `${t('round_label')} ${roundNum} / 13`;
+  updateProgress(roundNum);
+
+  renderRoundContent(roundNum);
+  renderFeedSidebar();
+  showScreen('round');
+  startReadTimer();
+}
+
+function renderRoundContent(roundNum) {
+  const moment = MOMENTS[roundNum - 1];
+  const lang = state.lang;
+  const isLocked = state.phase === 'read';
+
+  let choicesHTML = '';
+  if (isLocked) {
+    choicesHTML = `<div class="choices-locked-msg">🔒 ${t('read_instruction')} <strong id="lock-countdown">${state.readRemaining}</strong> ${t('read_unlocks')}</div>
+    <div style="text-align:center;margin-top:10px"><button class="skip-read-btn" onclick="skipReadTimer()" data-t="btn_skip_read">Vai alle Opzioni →</button></div>`;
+  } else {
+    const labelKey = moment.type === 'rank' || moment.type === 'rank3of' ? 'choices_label_rank' :
+                     moment.type === 'multi' ? 'choices_label_multi' : 'choices_label_single';
+    choicesHTML = `<div class="choices-section"><h3>${t(labelKey)}</h3>`;
+
+    if (moment.type === 'rank' || moment.type === 'rank3of') {
+      choicesHTML += `<p style="font-size:12px;color:var(--grey);margin-bottom:12px;">${t('rank_instruction')}</p>`;
+    }
+    if (moment.type === 'multi') {
+      const chosen = state.selectedChoices.length;
+      const needed = moment.count;
+      choicesHTML += `<div class="select-counter">${t('select_instruction')} <span>${needed}</span> ${t('select_of')} ${moment.choices.length} — <span>${chosen}</span> ${t('select_chosen')}</div>`;
+    }
+    if (moment.type === 'rank3of') {
+      const ranked = state.rankOrder.length;
+      const needed = moment.count;
+      choicesHTML += `<div class="select-counter">${t('select_instruction')} <span>${needed}</span> ${t('select_of')} ${moment.totalChoices} — <span>${ranked}</span> ${t('select_chosen')}</div>`;
+    }
+
+    moment.choices.forEach(choice => {
+      const isSelected = state.selectedChoices.includes(choice.id);
+      const rankPos = state.rankOrder.indexOf(choice.id);
+      const isRanked = rankPos !== -1;
+
+      let cls = 'choice-item';
+      if (isSelected) cls += ' selected';
+      if (isRanked) cls += ' ranked';
+
+      let rankBadge = '';
+      if (isRanked) rankBadge = `<div class="rank-badge">${rankPos + 1}</div>`;
+
+      const idDisplay = isRanked ? (rankPos + 1) : choice.id;
+      const idCls = isRanked ? '' : '';
+
+      choicesHTML += `<div class="${cls}" onclick="handleChoiceClick('${choice.id}')">
+        <div class="choice-id">${isRanked ? (rankPos + 1) + '°' : choice.id}</div>
+        <div class="choice-text">${localizeText(choice[lang])}</div>
+        ${rankBadge}
+      </div>`;
+    });
+
+    choicesHTML += `</div>`;
+  }
+
+  let phaseBadge = '';
+  if (state.phase === 'read') phaseBadge = `<div class="phase-badge read">${t('read_phase')}</div>`;
+  else if (!state.overtime) phaseBadge = `<div class="phase-badge answer">${t('answer_phase')}</div>`;
+  else phaseBadge = `<div class="phase-badge overtime">${t('overtime_phase')}</div>`;
+
+  const timerVal = state.phase === 'read' ? state.readRemaining : state.answerRemaining;
+  const totalSecs = state.phase === 'read' ? 120 : 600;
+  const pct = Math.max(0, (timerVal / totalSecs) * 100);
+  const timerCls = timerVal > 120 ? '' : timerVal > 60 ? 'amber' : 'red';
+
+  const html = `
+    <div class="round-header">
+      <div class="round-title-block">
+        <div class="round-subtitle">${t('round_label')} ${roundNum} / 13 · ${moment.time}</div>
+        <h2>${moment.title[lang]}</h2>
+      </div>
+      <div class="timer-block">
+        <div class="timer-label">${state.phase === 'read' ? (lang === 'it' ? 'Lettura' : 'Reading') : (lang === 'it' ? 'Risposta' : 'Answer')}</div>
+        <div class="timer-value ${timerCls}" id="timer-value">${formatTime(timerVal)}</div>
+        <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:${pct}%"></div></div>
+      </div>
+    </div>
+    ${phaseBadge}
+    <div class="scenario-box">${localizeText(moment.scenario[lang])}</div>
+    <div class="overtime-warning" id="overtime-warning">${t('overtime_msg')}</div>
+    ${choicesHTML}
+    <div class="submit-area">
+      <div class="submit-hint" id="submit-hint"></div>
+      ${!isLocked ? `
+      <button class="btn-secondary" onclick="resetSelection()">${t('btn_reset')}</button>
+      <button class="btn-primary" id="btn-confirm" onclick="showInlineDebrief()" disabled
+        style="opacity:0.4;transition:opacity 0.2s">${t('btn_submit')}</button>` : ''}
+    </div>
+  `;
+  document.getElementById('game-main').innerHTML = html;
+  updateSubmitState();
+}
+
+function renderFeedSidebar() {
+  const feedCards = document.getElementById('feed-cards');
+  if (!feedCards) return;
+  feedCards.innerHTML = '';
+  state.allFeedCards.forEach(card => {
+    const el = document.createElement('div');
+    const typeClass = card.type === 'email' ? 'email' : card.type === 'corridor' ? 'corridor' : 'calendar';
+    el.className = `feed-card ${typeClass}`;
+    const relevanceTag = card.relevant ? '<span style="background:var(--teal);color:var(--navy);padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;margin-left:6px">📌</span>' : '';
+      const typeLabel = card.type === 'email' ? (state.lang === 'it' ? 'Email' : 'Email') :
+                      card.type === 'corridor' ? (state.lang === 'it' ? 'Corridoio' : 'Corridor') : 'Cal';
+    el.innerHTML = localizeText(`<div class="feed-card-type">${typeLabel} · ${card.time}</div>
+      <div class="feed-from">${card.from}</div>
+      <div class="feed-subject">${card.subject[state.lang]}</div>
+      <div class="feed-body">${card.body[state.lang]}</div>`);
+    feedCards.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TIMERS
+// ═══════════════════════════════════════════════════════════
+function startReadTimer() {
+  state.readInterval = setInterval(() => {
+    state.readRemaining--;
+    const el = document.getElementById('timer-value');
+    const bar = document.getElementById('timer-bar');
+    const cd = document.getElementById('lock-countdown');
+    if (el) {
+      el.textContent = formatTime(state.readRemaining);
+      const pct = (state.readRemaining / 120) * 100;
+      if (bar) bar.style.width = pct + '%';
+    }
+    if (cd) cd.textContent = state.readRemaining;
+    if (state.readRemaining <= 0) {
+      clearInterval(state.readInterval);
+      unlockChoices();
+    }
+  }, 1000);
+}
+
+function unlockChoices() {
+  state.phase = 'answer';
+  renderRoundContent(state.currentRound);
+  startAnswerTimer();
+}
+
+function startAnswerTimer() {
+  state.answerInterval = setInterval(() => {
+    state.answerRemaining--;
+    const el = document.getElementById('timer-value');
+    const bar = document.getElementById('timer-bar');
+    if (el) {
+      const pct = (state.answerRemaining / 300) * 100;
+      el.textContent = formatTime(state.answerRemaining);
+      el.className = 'timer-value ' + (state.answerRemaining > 300 ? '' : state.answerRemaining > 120 ? 'amber' : 'red');
+      if (bar) { bar.style.width = pct + '%'; bar.style.background = state.answerRemaining > 300 ? 'var(--green)' : state.answerRemaining > 120 ? 'var(--amber)' : 'var(--red)'; }
+    }
+    if (state.answerRemaining <= 0 && !state.overtime) {
+      state.overtime = true;
+      if (!state.overtimePenaltyApplied) {
+        state.overtimePenaltyApplied = true;
+        state.totalScore = Math.max(0, state.totalScore - 5);
+      }
+      const warn = document.getElementById('overtime-warning');
+      if (warn) warn.style.display = 'block';
+      const phaseBadge = document.querySelector('.phase-badge');
+      if (phaseBadge) { phaseBadge.className = 'phase-badge overtime'; phaseBadge.textContent = t('overtime_phase'); }
+      clearInterval(state.answerInterval);
+    }
+  }, 1000);
+}
+
+function skipReadTimer() {
+  if (state.phase !== 'read') return;
+  clearInterval(state.readInterval);
+  state.readRemaining = 0;
+  unlockChoices();
+}
+
+function clearIntervals() {
+  if (state.readInterval) clearInterval(state.readInterval);
+  if (state.answerInterval) clearInterval(state.answerInterval);
+}
+
+function formatTime(secs) {
+  const m = Math.floor(Math.max(0, secs) / 60);
+  const s = Math.max(0, secs) % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHOICE INTERACTION
+// ═══════════════════════════════════════════════════════════
+function handleChoiceClick(id) {
+  if (state.phase !== 'answer') return;
+  if (state.answerSubmitted) return;
+  const moment = MOMENTS[state.currentRound - 1];
+
+  if (moment.type === 'single') {
+    state.selectedChoices = [id];
+  } else if (moment.type === 'multi') {
+    if (state.selectedChoices.includes(id)) {
+      state.selectedChoices = state.selectedChoices.filter(x => x !== id);
+    } else if (state.selectedChoices.length < moment.count) {
+      state.selectedChoices.push(id);
+    }
+  } else if (moment.type === 'rank') {
+    if (state.rankOrder.includes(id)) {
+      state.rankOrder = state.rankOrder.filter(x => x !== id);
+    } else {
+      state.rankOrder.push(id);
+    }
+  } else if (moment.type === 'rank3of') {
+    if (state.rankOrder.includes(id)) {
+      state.rankOrder = state.rankOrder.filter(x => x !== id);
+    } else if (state.rankOrder.length < moment.count) {
+      state.rankOrder.push(id);
+    }
+  }
+  renderRoundContent(state.currentRound);
+  updateConfirmButton();
+  // scroll choices into view on mobile
+  setTimeout(() => {
+    const confirmBtn = document.getElementById('btn-confirm');
+    if (confirmBtn && !confirmBtn.disabled) confirmBtn.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+
+function updateConfirmButton() {
+  const btn = document.getElementById('btn-confirm');
+  if (!btn) return;
+  const moment = MOMENTS[state.currentRound - 1];
+  const ready =
+    (moment.type === 'single'   && state.selectedChoices.length === 1) ||
+    (moment.type === 'multi'    && state.selectedChoices.length === moment.count) ||
+    (moment.type === 'rank'     && state.rankOrder.length === moment.choices.length) ||
+    (moment.type === 'rank3of'  && state.rankOrder.length === moment.count);
+  btn.disabled = !ready;
+  btn.style.opacity = ready ? '1' : '0.4';
+}
+
+function resetSelection() {
+  state.selectedChoices = [
+  ];
+  state.rankOrder = [
+  ];
+  renderRoundContent(state.currentRound);
+  updateConfirmButton();
+  // scroll choices into view on mobile
+  setTimeout(() => {
+    const confirmBtn = document.getElementById('btn-confirm');
+    if (confirmBtn && !confirmBtn.disabled) confirmBtn.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+
+function updateSubmitState() {
+  const btn = document.getElementById('btn-submit');
+  if (!btn) return;
+  const moment = MOMENTS[state.currentRound - 1];
+  let ready = false;
+  if (moment.type === 'single') ready = state.selectedChoices.length === 1;
+  else if (moment.type === 'multi') ready = state.selectedChoices.length === moment.count;
+  else if (moment.type === 'rank') ready = state.rankOrder.length === moment.choices.length;
+  else if (moment.type === 'rank3of') ready = state.rankOrder.length === moment.count;
+  btn.disabled = !ready;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCORING
+// ═══════════════════════════════════════════════════════════
+function calculateScore(moment) {
+  const correct = moment.correct;
+  let points = 0;
+
+  if (moment.type === 'single') {
+    points = correct.includes(state.selectedChoices[0]) ? 10 : 0;
+  } else if (moment.type === 'multi') {
+    const selected = new Set(state.selectedChoices);
+    const correctSet = new Set(correct);
+    let correctPicks = 0;
+    let wrongPicks = 0;
+    selected.forEach(s => { if (correctSet.has(s)) correctPicks++; else wrongPicks++; });
+    points = Math.max(0, Math.round((correctPicks / correct.length) * 10) - wrongPicks * 2);
+  } else if (moment.type === 'rank') {
+    let correctPositions = 0;
+    state.rankOrder.forEach((id, i) => { if (id === correct[i]) correctPositions++; });
+    points = Math.round((correctPositions / correct.length) * 10);
+  } else if (moment.type === 'rank3of') {
+    // Score: correct item in correct position = 3pts, correct item wrong position = 1pt
+    let pts = 0;
+    state.rankOrder.forEach((id, i) => {
+      if (id === correct[i]) pts += 3.33;
+      else if (correct.includes(id)) pts += 1;
+    });
+    points = Math.min(10, Math.round(pts));
+  }
+
+  if (state.overtime && state.overtimePenaltyApplied) {
+    points = Math.max(0, points - 5);
+  }
+  return points;
+}
+
+function getAnswerText(moment) {
+  const lang = state.lang;
+  if (moment.type === 'rank' || moment.type === 'rank3of') {
+    return state.rankOrder.map((id, i) => {
+      const choice = moment.choices.find(c => c.id === id);
+      return `${i + 1}. ${choice ? choice[lang] : id}`;
+    }).join('\n');
+  } else {
+    return state.selectedChoices.map(id => {
+      const choice = moment.choices.find(c => c.id === id);
+      return choice ? choice[lang] : id;
+    }).join(', ');
+  }
+}
+
+function getCorrectText(moment) {
+  const lang = state.lang;
+  return moment.correct.map((id, i) => {
+    const choice = moment.choices.find(c => c.id === id);
+    return moment.type === 'rank' || moment.type === 'rank3of'
+      ? `${i + 1}. ${choice ? choice[lang] : id}`
+      : (choice ? choice[lang] : id);
+  }).join(moment.type === 'rank' || moment.type === 'rank3of' ? '\n' : ', ');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════════════════
+function showInlineDebrief() {
+  if (state.answerSubmitted) return;
+  state.answerSubmitted = true;
+  clearIntervals();
+  const moment = MOMENTS[state.currentRound - 1];
+  const lang = state.lang;
+  const points = calculateScore(moment);
+  const timeTaken = (120 - state.readRemaining) + (300 - state.answerRemaining);
+  const answerStr = (moment.type === 'rank' || moment.type === 'rank3of')
+    ? state.rankOrder.join(',') : state.selectedChoices.join(',');
+
+  state.answers.push({
+    round: state.currentRound, momentTitle: moment.title,
+    answerGiven: answerStr, answerText: getAnswerText(moment),
+    correctText: getCorrectText(moment), points,
+    overtime: state.overtime, explanation: moment.explanation
+  });
+  state.totalScore += points;
+  saveToSheet(state.teamName, state.currentRound, answerStr, points, timeTaken);
+
+  const isCorrect = points >= 8;
+  const isPartial = points > 0 && points < 8;
+  const borderCol = isCorrect ? 'var(--green)' : isPartial ? 'var(--amber)' : 'var(--red)';
+  const icon = isCorrect ? '✓' : isPartial ? '~' : '✗';
+  const label = isCorrect ? (lang==='it'?'Corretto!':'Correct!') : isPartial ? (lang==='it'?'Parziale':'Partial') : (lang==='it'?'Non corretto':'Incorrect');
+
+  const debriefHTML = `
+    <div style="margin-top:20px;border:1px solid ${borderCol};border-radius:12px;padding:20px;border-left:4px solid ${borderCol};background:${isCorrect ? 'rgba(6,128,96,0.1)' : isPartial ? 'rgba(176,112,16,0.1)' : 'rgba(192,48,58,0.1)'}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span style="font-size:16px;font-weight:800;color:${borderCol}">${icon} ${label}</span>
+        <span style="font-size:20px;font-weight:900;color:${borderCol}">${points}<span style="font-size:12px;font-weight:400;color:var(--grey)"> / 10 pts</span></span>
+      </div>
+      ${!isCorrect ? `<div style="margin-bottom:12px;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:12px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--grey);margin-bottom:4px">${lang==='it'?'Risposta Corretta':'Correct Answer'}</div>
+        <div style="color:var(--green);white-space:pre-line">${getCorrectText(moment)}</div>
+      </div>` : ''}
+      <div style="padding:12px 14px;background:rgba(0,180,216,0.07);border:1px solid rgba(0,180,216,0.2);border-radius:8px;font-size:13px;color:var(--grey2);line-height:1.6">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:6px">💡 ${lang==='it'?'Perché':'Why'}</div>
+        ${localizeText(moment.explanation[lang])}
+      </div>
+      <div style="text-align:right;margin-top:16px">
+        <button class="btn-primary" onclick="continueAfterAnswer()">${lang==='it'?'Continua →':'Continue →'}</button>
+      </div>
+    </div>`;
+
+  const main = document.getElementById('game-main');
+  // Disable all choices
+  main.querySelectorAll('.choice-item').forEach(el => el.style.pointerEvents = 'none');
+  // Hide submit area
+  const sa = main.querySelector('.submit-area');
+  if (sa) sa.style.display = 'none';
+  // Append debrief
+  main.insertAdjacentHTML('beforeend', debriefHTML);
+  main.scrollTo({top: main.scrollHeight, behavior: 'smooth'});
+  // auto-scroll removed per feedback
+}
+
+function continueAfterAnswer() {
+  if (state.currentRound === 13) {
+    completeToSheet(state.teamName, state.totalScore, 13);
+    showScreen('complete');
+  } else {
+    showGossipTransition(state.currentRound, false, false);
+  }
+}
+
+function submitAnswer() {
+  // Legacy fallback (called from old btn-submit clicks)
+  showInlineDebrief();
+}
+
+function advanceRound() {
+  // handled by gossip btn onclick
+}
+
+// ═══════════════════════════════════════════════════════════
+// API CALLS
+// ═══════════════════════════════════════════════════════════
+async function saveToSheet(team, round, answer, points, time) {
+  try {
+    const url = `${SCRIPT_URL}?action=saveAnswer&team=${encodeURIComponent(team)}&round=${round}&answer=${encodeURIComponent(answer)}&points=${points}&time=${time}`;
+    await fetch(url);
+  } catch (e) { /* silent fail */ }
+}
+
+async function completeToSheet(team, score, rounds) {
+  try {
+    const url = `${SCRIPT_URL}?action=complete&team=${encodeURIComponent(team)}&score=${score}&rounds=${rounds}`;
+    await fetch(url);
+  } catch (e) { /* silent fail */ }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════════
+function updateProgress(round) {
+  const pct = (round / 13) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ═══════════════════════════════════════════════════════════
+// REPORT
+// ═══════════════════════════════════════════════════════════
+function showReport() {
+  const lang = state.lang;
+  const maxScore = 130;
+  const correct = state.answers.filter(a => a.points >= 10).length;
+  const partial = state.answers.filter(a => a.points > 0 && a.points < 10).length;
+  const wrong = state.answers.filter(a => a.points === 0).length;
+
+  document.getElementById('report-team-name').textContent = state.teamName;
+  document.getElementById('report-score-big').textContent = state.totalScore;
+  document.getElementById('report-max-score').textContent = maxScore;
+
+  document.getElementById('report-summary').innerHTML = `
+    <div class="report-stat"><div class="report-stat-num" style="color:var(--green)">${correct}</div><div class="report-stat-label">${t('correct_label')}</div></div>
+    <div class="report-stat"><div class="report-stat-num" style="color:var(--amber)">${partial}</div><div class="report-stat-label">${t('partial_label')}</div></div>
+    <div class="report-stat"><div class="report-stat-num" style="color:var(--red)">${wrong}</div><div class="report-stat-label">${t('wrong_label')}</div></div>
+  <div class="report-stat"><div class="report-stat-num" style="color:var(--amber)">${state.likability}%</div><div class="report-stat-label">Likability</div></div>
+  <div class="report-stat"><div class="report-stat-num" style="color:var(--green)">+${state.bonusPoints}</div><div class="report-stat-label">${lang==='it'?'Bonus':'Bonus'}</div></div>
+  `;
+
+  // Strengths and weaknesses
+  const strengths = state.answers.filter(a => a.points >= 8).map(a => a.momentTitle[lang]);
+  const weaknesses = state.answers.filter(a => a.points < 5).map(a => a.momentTitle[lang]);
+  document.getElementById('sw-section').innerHTML = `
+    <div class="sw-card strength"><h3>${t('strengths_title')}</h3><ul>${strengths.length ? strengths.map(s => `<li>${s}</li>`).join('') : `<li style="color:var(--grey)">${lang === 'it' ? 'Nessun punto di forza identificato.' : 'No strengths identified.'}</li>`}</ul></div>
+    <div class="sw-card weakness"><h3>${t('weaknesses_title')}</h3><ul>${weaknesses.length ? weaknesses.map(w => `<li>${w}</li>`).join('') : `<li style="color:var(--grey)">${lang === 'it' ? 'Nessuna area critica.' : 'No critical areas.'}</li>`}</ul></div>
+  `;
+
+  // Round breakdown
+  const rounds = document.getElementById('report-rounds');
+  rounds.innerHTML = '';
+  state.answers.forEach((ans, i) => {
+    const cls = ans.points >= 8 ? 'correct' : ans.points >= 3 ? 'partial' : 'wrong';
+    const div = document.createElement('div');
+    div.className = `report-round-item ${cls}`;
+    div.innerHTML = `
+      <div class="report-round-header" onclick="toggleDetail(this)">
+        <div><div class="report-round-num">${t('round_label')} ${ans.round}</div>
+        <div class="report-round-title">${ans.momentTitle[lang]}</div></div>
+        <div class="report-points-badge">${ans.points} / 10 pts</div>
+      </div>
+      <div class="report-round-detail">
+        <div class="report-answer-row">
+          <div class="report-answer-box"><div class="report-answer-label">${t('report_your_answer')}</div><div style="white-space:pre-line;font-size:13px;color:${ans.points >= 8 ? 'var(--green)' : 'var(--red)'}">${ans.answerText}</div></div>
+          <div class="report-answer-box"><div class="report-answer-label">${t('report_correct')}</div><div style="white-space:pre-line;font-size:13px;color:var(--green)">${ans.correctText}</div></div>
+        </div>
+        <div class="report-explanation"><div class="report-explanation-label">💡 ${t('report_why')}</div>${ans.explanation[lang]}</div>
+      </div>
+    `;
+    rounds.appendChild(div);
+  });
+
+  showScreen('report');
+}
+
+function toggleDetail(header) {
+  const detail = header.nextElementSibling;
+  detail.classList.toggle('open');
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// MINI-GAMES & LIKABILITY SYSTEM
+// ═══════════════════════════════════════════════════════════
+
+// Which minigame comes after which round?
+// After round 2: water cooler | After round 5: basketball | After round 9: reciprocity/cake
+
+
+// ── ELEVATOR PITCH ──────────────────────────────────
+
+
+
+
+// ── WATER COOLER ────────────────────────────────────────────
+
+
+
+
+
+
+
+// Mini-game routing handled inside showGossipTransition and startGame directly.
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+
+  // iOS/mobile touch fixes
+  document.addEventListener('touchstart', function(){}, {passive: true});
+
+document.addEventListener('DOMContentLoaded', () => {
+  setLang('it');
+});
+</script>
+
+<div class="screen" id="screen-watercooler">
+  <div class="minigame-screen">
+    <div style="font-size:48px;margin-bottom:8px">💧</div>
+    <div class="minigame-title" data-t="watercooler_title">Distributore d'Acqua</div>
+    <div class="minigame-subtitle" data-t="watercooler_sub">Incontri Leonardo Bianchi al distributore.</div>
+    <div class="cooler-scene">
+      <div class="cooler-char">
+        <div class="cooler-avatar mg-avatar" style="background:var(--amber)">LB</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px" class="mg-char-name">Leonardo Bianchi</div>
+          <div class="cooler-bubble mg-bubble"></div>
+        </div>
+      </div>
+      <div class="cooler-options mg-options"></div>
+      <div class="minigame-reward mg-reward" style="display:none;margin-top:12px"></div>
+      <div style="text-align:center;margin-top:12px">
+        <button class="btn-primary mg-continue" style="display:none">Continua →</button>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="skip-read-btn" onclick="skipMinigame('watercooler')" data-t="minigame_skip">Salta →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MINI-GAME: RECIPROCITY (CAKE) ═══════════════════ -->
+<div class="screen" id="screen-reciprocity">
+  <div class="minigame-screen">
+    <div style="font-size:48px;margin-bottom:8px">🎂</div>
+    <div class="minigame-title" data-t="reciprocity_title">Torta in Ufficio!</div>
+    <div class="minigame-subtitle" data-t="reciprocity_sub">Qualcuno ha portato la torta. Sandro Lorini è lì.</div>
+    <div class="cooler-scene">
+      <div class="cooler-char">
+        <div class="cooler-avatar mg-avatar" style="background:var(--red)">SL</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px" class="mg-char-name">Sandro Lorini</div>
+          <div class="cooler-bubble mg-bubble"></div>
+        </div>
+      </div>
+      <div class="cooler-options mg-options"></div>
+      <div class="minigame-reward mg-reward" style="display:none;margin-top:12px"></div>
+      <div style="text-align:center;margin-top:12px">
+        <button class="btn-primary mg-continue" style="display:none">Continua →</button>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="skip-read-btn" onclick="skipMinigame('reciprocity')" data-t="minigame_skip">Salta →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MINI-GAME: ELEVATOR PITCH ═══════════════════ -->
+<div class="screen" id="screen-elevator">
+  <div class="minigame-screen">
+    <div style="font-size:48px;margin-bottom:8px">🛗</div>
+    <div class="minigame-title" data-t="elevator_title">L'Ascensore — 30 Secondi col CEO</div>
+    <div class="minigame-subtitle" data-t="elevator_sub">Il CEO ti chiede un aggiornamento. Hai 30 secondi.</div>
+    <div class="cooler-scene">
+      <div class="cooler-char">
+        <div class="cooler-avatar mg-avatar" style="background:var(--gold)">OC</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px" class="mg-char-name">Oscar C. Taffi</div>
+          <div class="cooler-bubble mg-bubble"></div>
+        </div>
+      </div>
+      <div class="cooler-options mg-options"></div>
+      <div class="minigame-reward mg-reward" style="display:none;margin-top:12px"></div>
+      <div style="text-align:center;margin-top:12px">
+        <button class="btn-primary mg-continue" style="display:none">Continua →</button>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="skip-read-btn" onclick="skipMinigame('elevator')" data-t="minigame_skip">Salta →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MINI-GAME: SOCIAL PROOF ═══════════════════ -->
+<div class="screen" id="screen-socialproof">
+  <div class="minigame-screen">
+    <div style="font-size:48px;margin-bottom:8px">🤝</div>
+    <div class="minigame-title" data-t="sp_title">Riprova Sociale — Chi è con te?</div>
+    <div class="minigame-subtitle" data-t="sp_sub">Un membro del Committee vuole sapere chi supporta il progetto.</div>
+    <div class="cooler-scene">
+      <div class="cooler-char">
+        <div class="cooler-avatar mg-avatar" style="background:var(--grey)">?</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px" class="mg-char-name">Membro del Committee</div>
+          <div class="cooler-bubble mg-bubble"></div>
+        </div>
+      </div>
+      <div class="cooler-options mg-options"></div>
+      <div class="minigame-reward mg-reward" style="display:none;margin-top:12px"></div>
+      <div style="text-align:center;margin-top:12px">
+        <button class="btn-primary mg-continue" style="display:none">Continua →</button>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="skip-read-btn" onclick="skipMinigame('socialproof')" data-t="minigame_skip">Salta →</button>
+    </div>
+  </div>
+</div>
+
+<button class="char-panel-btn" id="char-panel-btn" onclick="toggleCharPanel()">👥</button>
+<div class="char-panel" id="char-panel"><button class="char-panel-close" onclick="toggleCharPanel()">✕</button><div style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--teal)" data-t="char_panel_title">Profili Personaggi</div><div id="char-panel-cards"></div></div>
+</body>
+</html>

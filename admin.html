@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VTI — Confluenza Admin Panel</title>
+<style>
+  :root {
+    --navy: #0B1F3A; --navy2: #122844; --navy3: #1a3558;
+    --teal: #00B4D8; --teal2: #0096c7;
+    --gold: #F4A261; --white: #ffffff;
+    --grey: #8fa3b8; --grey2: #c5d3de;
+    --green: #06d6a0; --amber: #ffd166; --red: #ef476f;
+    --card: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--navy); color: var(--white); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  .header {
+    background: rgba(11,31,58,0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--teal), var(--teal2));
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px; color: var(--navy);
+  }
+  .admin-badge {
+    background: rgba(255,209,102,0.15);
+    border: 1px solid rgba(255,209,102,0.4);
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .auto-refresh-status {
+    font-size: 11px; color: var(--grey);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .refresh-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .btn {
+    border: none; border-radius: 8px; padding: 8px 16px;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--teal); color: var(--navy); }
+  .btn-primary:hover { background: var(--teal2); }
+  .btn-danger { background: rgba(239,71,111,0.15); color: var(--red); border: 1px solid rgba(239,71,111,0.3); }
+  .btn-danger:hover { background: rgba(239,71,111,0.25); }
+  .btn-outline { background: transparent; color: var(--grey2); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 600px) {
+    .stats-strip { grid-template-columns: 1fr 1fr; }
+    .header { flex-wrap: wrap; height: auto; padding: 12px; gap: 8px; }
+    .header-right { flex-wrap: wrap; gap: 8px; }
+    .main { padding: 16px 12px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px; }
+    .btn { padding: 7px 12px; font-size: 12px; }
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-num { font-size: 36px; font-weight: 900; color: var(--teal); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+  }
+  .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); }
+
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    padding: 12px 16px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--grey); background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  .rank-num {
+    font-weight: 900; font-size: 16px;
+    width: 32px; text-align: center;
+  }
+  .rank-1 { color: #FFD700; }
+  .rank-2 { color: #C0C0C0; }
+  .rank-3 { color: #CD7F32; }
+  .team-name-cell { font-weight: 700; color: var(--white); }
+  .score-cell { font-weight: 700; color: var(--teal); font-size: 15px; }
+  .status-pill {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+  }
+  .status-complete { background: rgba(6,214,160,0.15); color: var(--green); border: 1px solid rgba(6,214,160,0.3); }
+  .status-playing { background: rgba(0,180,216,0.15); color: var(--teal); border: 1px solid rgba(0,180,216,0.3); }
+  .progress-cell { min-width: 120px; }
+  .mini-progress {
+    height: 6px; background: rgba(255,255,255,0.08);
+    border-radius: 3px; overflow: hidden; margin-top: 4px;
+  }
+  .mini-progress-fill { height: 100%; background: var(--teal); border-radius: 3px; transition: width 0.4s; }
+  .drill-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--grey); border-radius: 6px; padding: 4px 10px;
+    font-size: 11px; cursor: pointer; transition: all 0.2s;
+  }
+  .drill-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  .empty-state {
+    text-align: center; padding: 48px 24px;
+    color: var(--grey);
+  }
+  .empty-state h3 { font-size: 16px; margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--navy2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 680px; width: 90%;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close { background: none; border: none; color: var(--grey); font-size: 20px; cursor: pointer; }
+  .modal-round {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px; padding: 14px;
+    margin-bottom: 10px;
+  }
+  .modal-round-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .modal-round-title { font-size: 13px; font-weight: 700; }
+  .modal-round-pts { font-size: 13px; font-weight: 700; color: var(--teal); }
+  .modal-answer { font-size: 12px; color: var(--grey2); }
+
+  .setup-panel {
+    background: var(--card);
+    border: 1px solid rgba(255,209,102,0.2);
+    border-radius: 12px; padding: 20px;
+    margin-bottom: 28px;
+  }
+  .setup-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--amber); margin-bottom: 8px; }
+  .setup-text { font-size: 13px; color: var(--grey2); line-height: 1.6; }
+  .setup-url-input {
+    width: 100%; margin-top: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; font-size: 13px; color: var(--white); outline: none;
+  }
+  .setup-url-input:focus { border-color: var(--teal); }
+
+  .last-updated { font-size: 11px; color: var(--grey); text-align: right; margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    .stats-strip { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">VTI</div>
+    <span style="font-size:14px;font-weight:700;">Admin Dashboard</span>
+    <span class="admin-badge">Facilitatore</span>
+  </div>
+  <div class="header-right">
+    <div class="auto-refresh-status">
+      <div class="refresh-dot" id="refresh-dot"></div>
+      <span id="refresh-label">Auto-refresh 30s</span>
+    </div>
+    <button class="btn btn-outline" onclick="loadData()">↺ Aggiorna</button>
+    <button class="btn btn-danger" onclick="confirmStop()">⏹ Stop Gara</button>
+    <button class="btn btn-outline" onclick="exportCSV()">⬇ Esporta CSV</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- Setup Panel -->
+  <div class="setup-panel" id="setup-panel">
+    <div class="setup-title">⚙ Configurazione</div>
+    <div class="setup-text">Incolla qui l'URL del tuo Apps Script Web App. Dopo averlo salvato, la dashboard si aggiorna automaticamente.</div>
+    <input type="text" class="setup-url-input" id="script-url-input" placeholder="https://script.google.com/macros/s/...../exec"
+      value="" oninput="saveScriptUrl()">
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stats-strip">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-total">—</div>
+      <div class="stat-label">Team Registrati</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-complete">—</div>
+      <div class="stat-label">Completati</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-playing">—</div>
+      <div class="stat-label">In Gioco</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-avg">—</div>
+      <div class="stat-label">Punteggio Medio</div>
+    </div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="section-header">
+    <div class="section-title">🏆 Classifica Live</div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px">#</th>
+          <th>Team</th>
+          <th>Punteggio</th>
+          <th>Progresso</th>
+          <th>Status</th>
+          <th>Registrato</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body">
+        <tr><td colspan="7"><div class="empty-state"><h3>Nessun dato ancora</h3><p>Configura l'URL dello script sopra e clicca Aggiorna.</p></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="last-updated" id="last-updated"></div>
+
+</div>
+
+<!-- Drill-down modal -->
+<div class="modal-overlay" id="drill-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-team-title">Team Details</div>
+      <button class="modal-close" onclick="closeDrill()">✕</button>
+    </div>
+    <div id="modal-body">Loading...</div>
+  </div>
+</div>
+
+<!-- Stop confirmation -->
+<div class="modal-overlay" id="stop-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-title">⏹ Ferma la Gara</div>
+      <button class="modal-close" onclick="document.getElementById('stop-modal').classList.remove('open')">✕</button>
+    </div>
+    <p style="font-size:14px;color:var(--grey2);line-height:1.6;margin-bottom:20px;">
+      Fermando la gara la classifica viene bloccata al punteggio attuale. I team che stanno ancora giocando vedranno la classifica parziale. Questa azione non è reversibile.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="document.getElementById('stop-modal').classList.remove('open')">Annulla</button>
+      <button class="btn btn-danger" onclick="stopGame()">Ferma e Mostra Classifica</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'vti_admin_script_url';
+let scriptUrl = localStorage.getItem(STORAGE_KEY) || '';
+let allTeams = [];
+let refreshInterval;
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  if (scriptUrl) {
+    document.getElementById('script-url-input').value = scriptUrl;
+    document.getElementById('setup-panel').style.display = 'none';
+    loadData();
+    startAutoRefresh();
+  }
+});
+
+function saveScriptUrl() {
+  scriptUrl = document.getElementById('script-url-input').value.trim();
+  localStorage.setItem(STORAGE_KEY, scriptUrl);
+  if (scriptUrl.includes('script.google.com')) {
+    document.getElementById('setup-panel').style.borderColor = 'rgba(6,214,160,0.3)';
+    loadData();
+    startAutoRefresh();
+  }
+}
+
+function startAutoRefresh() {
+  if (refreshInterval) clearInterval(refreshInterval);
+  let countdown = 30;
+  refreshInterval = setInterval(() => {
+    countdown--;
+    document.getElementById('refresh-label').textContent = `Auto-refresh ${countdown}s`;
+    if (countdown <= 0) {
+      loadData();
+      countdown = 30;
+    }
+  }, 1000);
+}
+
+async function loadData() {
+  if (!scriptUrl) return;
+  document.getElementById('refresh-dot').style.background = 'var(--amber)';
+  try {
+    const res = await fetch(`${scriptUrl}?action=rankings`);
+    const data = await res.json();
+    allTeams = data.teams || [];
+    renderLeaderboard(allTeams);
+    updateStats(allTeams);
+    document.getElementById('refresh-dot').style.background = 'var(--green)';
+    document.getElementById('last-updated').textContent = 'Ultimo aggiornamento: ' + new Date().toLocaleTimeString('it-IT');
+  } catch (e) {
+    document.getElementById('refresh-dot').style.background = 'var(--red)';
+    document.getElementById('last-updated').textContent = 'Errore di connessione — ' + new Date().toLocaleTimeString('it-IT');
+  }
+}
+
+function updateStats(teams) {
+  const complete = teams.filter(t => t.status === 'complete').length;
+  const playing = teams.filter(t => t.status === 'playing').length;
+  const scores = teams.filter(t => t.totalScore > 0).map(t => t.totalScore);
+  const avg = scores.length ? Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) : 0;
+  document.getElementById('stat-total').textContent = teams.length;
+  document.getElementById('stat-complete').textContent = complete;
+  document.getElementById('stat-playing').textContent = playing;
+  document.getElementById('stat-avg').textContent = avg || '—';
+}
+
+function renderLeaderboard(teams) {
+  const tbody = document.getElementById('leaderboard-body');
+  if (!teams.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><h3>Nessun team ancora</h3><p>I team appariranno qui quando si registrano.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = teams.map((t, i) => {
+    const rank = i + 1;
+    const rankCls = rank <= 3 ? `rank-${rank}` : '';
+    const statusCls = t.status === 'complete' ? 'status-complete' : 'status-playing';
+    const statusLabel = t.status === 'complete' ? '✓ Completato' : `▶ Momento ${t.currentRound || 0}`;
+    const pct = Math.round(((t.roundsCompleted || 0) / 13) * 100);
+    const reg = t.registeredAt ? new Date(t.registeredAt).toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'}) : '—';
+
+    let rankDisplay = rank;
+    if (rank === 1) rankDisplay = '🥇';
+    else if (rank === 2) rankDisplay = '🥈';
+    else if (rank === 3) rankDisplay = '🥉';
+
+    return `<tr>
+      <td class="rank-num ${rankCls}">${rankDisplay}</td>
+      <td class="team-name-cell">${escHtml(t.name)}</td>
+      <td class="score-cell">${t.totalScore || 0} <span style="font-size:11px;color:var(--grey);font-weight:400;">/ 130</span></td>
+      <td class="progress-cell">
+        <span style="font-size:11px;color:var(--grey)">${t.roundsCompleted || 0} / 13 round</span>
+        <div class="mini-progress"><div class="mini-progress-fill" style="width:${pct}%"></div></div>
+      </td>
+      <td><span class="status-pill ${statusCls}">${statusLabel}</span></td>
+      <td style="color:var(--grey);font-size:12px">${reg}</td>
+      <td><button class="drill-btn" onclick="openDrill('${escHtml(t.name)}')">Dettaglio</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function openDrill(teamName) {
+  document.getElementById('modal-team-title').textContent = teamName;
+  document.getElementById('modal-body').innerHTML = '<p style="color:var(--grey);text-align:center;padding:20px">Caricamento...</p>';
+  document.getElementById('drill-modal').classList.add('open');
+
+  try {
+    const res = await fetch(`${scriptUrl}?action=teamAnswers&team=${encodeURIComponent(teamName)}`);
+    const data = await res.json();
+    const answers = data.answers || [];
+
+    const TITLES = ['Richiedere un Team', 'Costruire Credibilità', 'Selezione Accounting', 'Cooperazione Manufacturing',
+      'Cooperazione Sam', 'Focalizzare Influenza', 'Presentazione — Struttura', 'Presentazione — Contenuto',
+      'Aiuto dalle Vendite', 'Lavorare con Lucas', 'Problemi con Sam', 'Influenzare il Team', 'Ultimo Scontro'];
+
+    if (!answers.length) {
+      document.getElementById('modal-body').innerHTML = '<p style="color:var(--grey);text-align:center;padding:20px">Nessun dato disponibile per questo team.</p>';
+      return;
+    }
+
+    const total = answers.reduce((s, a) => s + (a.points || 0), 0);
+    let html = `<div style="text-align:center;margin-bottom:20px"><span style="font-size:32px;font-weight:900;color:var(--teal)">${total}</span> <span style="color:var(--grey)">/ 130 punti</span></div>`;
+    answers.forEach(a => {
+      const title = TITLES[(a.round || 1) - 1] || `Momento ${a.round}`;
+      const ptsCls = (a.points >= 8) ? 'var(--green)' : (a.points >= 3) ? 'var(--amber)' : 'var(--red)';
+      html += `<div class="modal-round">
+        <div class="modal-round-header">
+          <div class="modal-round-title">M${a.round} — ${title}</div>
+          <div class="modal-round-pts" style="color:${ptsCls}">${a.points} / 10 pts</div>
+        </div>
+        <div class="modal-answer">Risposta: ${escHtml(a.answer)}</div>
+      </div>`;
+    });
+    document.getElementById('modal-body').innerHTML = html;
+  } catch(e) {
+    document.getElementById('modal-body').innerHTML = '<p style="color:var(--red);text-align:center;padding:20px">Errore nel caricare i dati.</p>';
+  }
+}
+
+function closeDrill() {
+  document.getElementById('drill-modal').classList.remove('open');
+}
+
+function confirmStop() {
+  document.getElementById('stop-modal').classList.add('open');
+}
+
+function stopGame() {
+  document.getElementById('stop-modal').classList.remove('open');
+  if (refreshInterval) clearInterval(refreshInterval);
+  document.getElementById('refresh-label').textContent = 'Gara Fermata';
+  document.getElementById('refresh-dot').style.background = 'var(--red)';
+  document.getElementById('refresh-dot').style.animation = 'none';
+  renderLeaderboard(allTeams);
+  alert('Gara fermata. La classifica mostra i punteggi aggiornati all\'ultimo salvataggio.');
+}
+
+function exportCSV() {
+  if (!allTeams.length) { alert('Nessun dato da esportare.'); return; }
+  const rows = [['Posizione','Team','Punteggio','Round Completati','Status','Registrato']];
+  allTeams.forEach((t, i) => {
+    rows.push([i + 1, t.name, t.totalScore || 0, t.roundsCompleted || 0, t.status,
+      t.registeredAt ? new Date(t.registeredAt).toLocaleString('it-IT') : '']);
+  });
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `VTI_Classifica_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;
+  link.click();
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
